@@ -14,6 +14,9 @@ class Ingredient(models.Model):
         verbose_name='Ingredient Description'
     )
 
+    def __str__(self):
+        return self.name
+
 
 class Recipe(models.Model):
     title = models.CharField(
@@ -28,14 +31,17 @@ class Recipe(models.Model):
     )
     ingredients = models.ManyToManyField(
         Ingredient,
-        through='RecipeIngredients'
+        through='RecipeIngredient'
     )
 
     created_time = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now=True)
+    modified_time = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
 
 
-class RecipeIngredients(models.Model):
+class RecipeIngredient(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         verbose_name='Ingredient used',
