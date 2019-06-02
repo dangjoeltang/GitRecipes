@@ -1,19 +1,25 @@
 from django.contrib import admin
 
-from .models import Ingredient, Tag, Recipe, RecipeIngredient, RecipeTag
+from .models import Ingredient, Tag, Recipe, RecipeIngredient, RecipeTag, RecipeStep
 
 
 # Register your models here.
 class RecipeIngredientInline(admin.StackedInline):
     model = RecipeIngredient
-    extra = 1
+    extra = 0
     can_delete = False
 
 
 class RecipeTagInline(admin.TabularInline):
     model = RecipeTag
-    extra = 1
+    extra = 0
     can_delete = False
+
+class RecipeStepInline(admin.StackedInline):
+    model = RecipeStep
+    extra = 0
+    can_delete = True
+    exclude=['step_number']
 
 
 @admin.register(Recipe)
@@ -22,7 +28,7 @@ class RecipeAdmin(admin.ModelAdmin):
     ordering = ('title', 'author')
     search_fields = ('title', 'author', 'ingredients')
     list_display = ('title', 'author', 'modified_time', 'created_time', )
-    inlines = (RecipeIngredientInline, RecipeTagInline)
+    inlines = (RecipeIngredientInline, RecipeTagInline, RecipeStepInline)
 
 
 @admin.register(Ingredient)

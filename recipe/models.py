@@ -17,6 +17,10 @@ class Ingredient(models.Model):
     created_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     modified_time = models.DateTimeField(auto_now=True, blank=True, null=True)
 
+    class Meta:
+        verbose_name='Ingredient'
+        verbose_name_plural='Ingredients'
+
     def __str__(self):
         return self.name
 
@@ -29,6 +33,10 @@ class Tag(models.Model):
 
     created_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     modified_time = models.DateTimeField(auto_now=True, blank=True, null=True)
+
+    class Meta:
+        verbose_name='Tag'
+        verbose_name_plural='Tags'
 
     def __str__(self):
         return self.tag_text
@@ -57,8 +65,43 @@ class Recipe(models.Model):
     created_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     modified_time = models.DateTimeField(auto_now=True, blank=True, null=True)
 
+    class Meta:
+        verbose_name='Recipe'
+        verbose_name_plural='Recipes'
+
     def __str__(self):
         return self.title
+
+
+class RecipeStep(models.Model):
+    id = models.AutoField(primary_key=True)
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE
+    )
+    step_number = models.PositiveSmallIntegerField(
+        default=0
+    )
+    step_text = models.TextField(
+        verbose_name='Step Directions'
+    )
+
+    class Meta:
+        verbose_name='Step in Recipe'
+        verbose_name_plural='Steps in Recipe'
+        unique_together=('id', 'step_number')
+
+    def __str__(self):
+        return str(self.step_number)
+
+    def save(self, force_insert=False, force_update=False):
+        if self.step_number == 0:
+            try:
+                recent = RecipeStep.objects.filter(recipe__exact=self.recipe).order_by('-step_number')[0]
+                self.step_number = recent.step_number + 1
+            except IndexError:
+                self.step_number = 1
+        super(RecipeStep, self).save(force_insert, force_update)
 
 
 class RecipeIngredient(models.Model):
@@ -81,6 +124,10 @@ class RecipeIngredient(models.Model):
         max_length=24
     )
 
+    class Meta:
+        verbose_name='Ingredient used in Recipe'
+        verbose_name_plural='Ingredients used in Recipe'
+
 
 class RecipeTag(models.Model):
     tag = models.ForeignKey(
@@ -93,3 +140,7 @@ class RecipeTag(models.Model):
         verbose_name='Recipe tagged',
         on_delete=models.CASCADE
     )
+
+    class Meta:
+        verbose_name='Tag in Recipe'
+        verbose_name_plural='Tags in Recipe'
