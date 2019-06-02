@@ -14,8 +14,24 @@ class Ingredient(models.Model):
         verbose_name='Ingredient Description'
     )
 
+    created_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    modified_time = models.DateTimeField(auto_now=True, blank=True, null=True)
+
     def __str__(self):
         return self.name
+
+
+class Tag(models.Model):
+    tag_text = models.CharField(
+        verbose_name='Tag',
+        max_length=24
+    )
+
+    created_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    modified_time = models.DateTimeField(auto_now=True, blank=True, null=True)
+
+    def __str__(self):
+        return self.tag_text
 
 
 class Recipe(models.Model):
@@ -33,9 +49,13 @@ class Recipe(models.Model):
         Ingredient,
         through='RecipeIngredient'
     )
+    tags = models.ManyToManyField(
+        Tag,
+        through='RecipeTag'
+    )
 
-    created_time = models.DateTimeField(auto_now_add=True)
-    modified_time = models.DateTimeField(auto_now=True)
+    created_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    modified_time = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     def __str__(self):
         return self.title
@@ -59,4 +79,17 @@ class RecipeIngredient(models.Model):
     quantity_unit = models.CharField(
         verbose_name='Ingredient quantity units',
         max_length=24
+    )
+
+
+class RecipeTag(models.Model):
+    tag = models.ForeignKey(
+        Tag,
+        verbose_name='Tag used',
+        on_delete=models.CASCADE
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        verbose_name='Recipe tagged',
+        on_delete=models.CASCADE
     )
