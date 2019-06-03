@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
+from user.models import User
 
 class Ingredient(models.Model):
     name = models.CharField(
@@ -48,7 +49,7 @@ class Recipe(models.Model):
         max_length=200,
     )
     author = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        User,
         verbose_name='Recipe Author',
         on_delete=models.CASCADE,
         default=''

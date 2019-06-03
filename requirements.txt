@@ -1,0 +1,8 @@
+Django==2.2.1
+djangorestframework==3.9.4
+djangorestframework-simplejwt==4.3.0
+mysqlclient==1.4.2.post1
+PyJWT==1.7.1
+python-dotenv==0.10.2
+pytz==2019.1
+sqlparse==0.3.0
