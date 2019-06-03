@@ -94,6 +94,7 @@ class RecipeStep(models.Model):
     def __str__(self):
         return str(self.step_number)
 
+    # Deleting a middle step will not decrement all the following steps
     def save(self, force_insert=False, force_update=False):
         if self.step_number == 0:
             try:
@@ -102,6 +103,24 @@ class RecipeStep(models.Model):
             except IndexError:
                 self.step_number = 1
         super(RecipeStep, self).save(force_insert, force_update)
+
+
+class RecipeNote(models.Model):
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE
+    )
+    note_text = models.TextField(
+        verbose_name = 'Note'
+    )
+
+    class Meta:
+        verbose_name='Note about Recipe'
+        verbose_name_plural='Notes about Recipe'
+    
+    def __str__(self):
+        return 'Notes'
+
 
 
 class RecipeIngredient(models.Model):
@@ -144,3 +163,5 @@ class RecipeTag(models.Model):
     class Meta:
         verbose_name='Tag in Recipe'
         verbose_name_plural='Tags in Recipe'
+
+

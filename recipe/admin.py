@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Ingredient, Tag, Recipe, RecipeIngredient, RecipeTag, RecipeStep
+from .models import Ingredient, Tag, Recipe, RecipeIngredient, RecipeTag, RecipeStep, RecipeNote
 
 
 # Register your models here.
@@ -19,7 +19,12 @@ class RecipeStepInline(admin.StackedInline):
     model = RecipeStep
     extra = 0
     can_delete = True
-    exclude=['step_number']
+    # Deleting a middle step will not decrement all the following steps
+    # exclude=['step_number']
+
+class RecipeNoteInline(admin.TabularInline):
+    model = RecipeNote
+    extra = 0
 
 
 @admin.register(Recipe)
@@ -28,7 +33,7 @@ class RecipeAdmin(admin.ModelAdmin):
     ordering = ('title', 'author')
     search_fields = ('title', 'author', 'ingredients')
     list_display = ('title', 'author', 'modified_time', 'created_time', )
-    inlines = (RecipeIngredientInline, RecipeTagInline, RecipeStepInline)
+    inlines = (RecipeIngredientInline, RecipeTagInline, RecipeStepInline, RecipeNoteInline)
 
 
 @admin.register(Ingredient)
