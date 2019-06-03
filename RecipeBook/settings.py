@@ -88,6 +88,9 @@ DATABASES = {
         'PASSWORD': os.getenv("DB_PASSWORD"),
         # 'HOST': os.getenv("DB_HOST"),
         # 'PORT': os.getenv("DB_PORT"),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        }
     }
 }
 
@@ -110,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'user.User'
+AUTH_USER_MODEL = 'user.UserAccount'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

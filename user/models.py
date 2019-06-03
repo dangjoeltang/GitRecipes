@@ -4,13 +4,13 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
 
-class User(AbstractUser):
+class UserAccount(AbstractUser):
 
     def __str__(self):
-        return self.email
+        return self.username
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    user_account = models.OneToOneField(UserAccount, on_delete=models.CASCADE, related_name='profile')
     first_name = models.CharField(max_length=25)
     last_name = models.CharField(max_length=25)
