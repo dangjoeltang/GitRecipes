@@ -6,27 +6,29 @@ from rest_framework.authtoken.models import Token
 
 from user.models import UserAccount, UserProfile
 
+
 class UserProfileSerializer(serializers.ModelSerializer):
-    # user_account = serializers.HyperlinkedRelatedField(view_name='useraccount-detail', read_only=True)
 
     class Meta:
         model = UserProfile
-        fields = ('user_account', 'first_name', 'last_name')
+        fields = '__all__'
+        extra_kwargs = {
+            'user_account': {'view_name': 'useraccount-detail'},
+        }
 
 
 class UserAccountSerializer(serializers.HyperlinkedModelSerializer):
-
     profile = UserProfileSerializer(
-        required=True,
+        read_only=True,
+        required=False
     )
 
 
     class Meta:
         model = UserAccount
-        # fields = ('pk', 'username', 'email', 'password', 'profile')
-        fields = ('id', 'url', 'email', 'first_name', 'last_name', 'password', 'profile')
+        fields = ('id', 'url', 'email', 'username', 'first_name', 'last_name', 'profile')
         extra_kwargs = {
-            'url': {'view_name': 'userprofile-detail'},
+            'url': {'view_name': 'useraccount-detail'},
             'password': {'write_only': True}
         }
 
