@@ -11,7 +11,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = '__all__'
+        fields = ('user_account', 'first_name', 'last_name')
 
 
 class UserAccountSerializer(serializers.HyperlinkedModelSerializer):
