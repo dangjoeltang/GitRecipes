@@ -49,3 +49,21 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ('pk', 'title', 'author', 'ingredients', 'tags', 'steps', 'notes', 'created_time', 'modified_time')
+
+class RecipeListSerializer(serializers.HyperlinkedModelSerializer):
+    author = serializers.StringRelatedField()
+    url = RecipeSerializer(
+        read_only=True,
+        required=False
+    )
+
+    num_ingredients = serializers.IntegerField(source='recipe_ingredients.count', read_only=True)
+    num_steps = serializers.IntegerField(source='steps.count', read_only=True)
+    tags = serializers.StringRelatedField(many=True)
+
+    class Meta:
+        model = Recipe
+        fields = ('pk', 'url', 'title', 'author', 'num_ingredients', 'tags', 'num_steps', 'created_time', 'modified_time')
+        extra_kwargs = {
+            'url': {'view_name': 'recipe-detail'}
+        }

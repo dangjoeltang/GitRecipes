@@ -12,7 +12,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 class RecipeListView(generics.ListCreateAPIView):
     queryset = Recipe.objects.all()
-    serializer_class = RecipeSerializer
+    serializer_class = RecipeListSerializer
 
 
 class RecipeDetailView(generics.RetrieveUpdateDestroyAPIView):
