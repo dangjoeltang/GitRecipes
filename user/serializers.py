@@ -13,7 +13,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = '__all__'
         extra_kwargs = {
-            'user_account': {'view_name': 'useraccount-detail'},
+            'url': {'view_name': 'userprofile-detail'},
         }
 
 

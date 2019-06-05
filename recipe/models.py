@@ -78,7 +78,8 @@ class RecipeStep(models.Model):
     id = models.AutoField(primary_key=True)
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='steps'
     )
     step_number = models.PositiveSmallIntegerField(
         default=0
@@ -109,18 +110,21 @@ class RecipeStep(models.Model):
 class RecipeNote(models.Model):
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='notes'
     )
     note_text = models.TextField(
         verbose_name = 'Note'
     )
+    # created_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    # modified_time = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     class Meta:
         verbose_name='Note about Recipe'
         verbose_name_plural='Notes about Recipe'
     
     def __str__(self):
-        return 'Notes'
+        return self.note_text
 
 
 
@@ -128,12 +132,13 @@ class RecipeIngredient(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         verbose_name='Ingredient used',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
     recipe = models.ForeignKey(
         Recipe,
         verbose_name='Recipe used',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='recipe_ingredients'
     )
     quantity_amount = models.CharField(
         verbose_name='Ingredient quantity',
@@ -141,24 +146,30 @@ class RecipeIngredient(models.Model):
     )
     quantity_unit = models.CharField(
         verbose_name='Ingredient quantity units',
-        max_length=24
+        max_length=24,
+        blank=True
     )
 
     class Meta:
         verbose_name='Ingredient used in Recipe'
         verbose_name_plural='Ingredients used in Recipe'
+    
+    def __str__(self):
+        return '{0} - {1} {2}'.format(self.ingredient.name, self.quantity_amount, self.quantity_unit)
 
 
 class RecipeTag(models.Model):
     tag = models.ForeignKey(
         Tag,
         verbose_name='Tag used',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        
     )
     recipe = models.ForeignKey(
         Recipe,
         verbose_name='Recipe tagged',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='recipe_tags'
     )
 
     class Meta:
