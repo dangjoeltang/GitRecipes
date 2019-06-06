@@ -6,7 +6,12 @@ from user.models import UserAccount, UserProfile
 from user.serializers import UserProfileSerializer, UserAccountSerializer
 
 
-class UserAccountViewSet(viewsets.ModelViewSet):
+class UserAccountListView(generics.ListCreateAPIView):
+    queryset = UserAccount.objects.all()
+    serializer_class = UserAccountSerializer
+
+
+class UserAccountDetailView(generics.RetrieveUpdateAPIView):
     queryset = UserAccount.objects.all()
     serializer_class = UserAccountSerializer
 

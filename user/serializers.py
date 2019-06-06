@@ -20,24 +20,20 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = ('id', 'user_account', 'first_name', 'last_name', 'author_recipes')
         extra_kwargs = {
-            'url': {'view_name': 'userprofile-detail'},
+            'url': {'view_name': 'profile-detail'},
         }
 
 
-class UserAccountSerializer(serializers.HyperlinkedModelSerializer):
-    profile = UserProfileSerializer(
-        read_only=True,
-        required=False
-    )
-
+class UserAccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserAccount
         fields = ('id', 'url', 'email', 'username', 'first_name', 'last_name', 'profile')
         extra_kwargs = {
-            'url': {'view_name': 'useraccount-detail'},
+            'url': {'view_name': 'account-detail'},
             'password': {'write_only': True}
-        },
+        }
+
         
 
     def create(self, validated_data):
