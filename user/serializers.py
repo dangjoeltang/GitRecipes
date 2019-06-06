@@ -5,9 +5,14 @@ from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 
 from user.models import UserAccount, UserProfile
+from recipe.models import Recipe
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    # author_recipes = serializers.HyperlinkedIdentityField(
+    #     view_name='recipe-list',
+    #     many=True,
+    # )
 
     class Meta:
         model = UserProfile
