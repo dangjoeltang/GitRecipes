@@ -19,3 +19,4 @@ class UserProfileListView(generics.ListCreateAPIView):
 class UserProfileDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
+    lookup_field = 'user_account__username'

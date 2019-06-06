@@ -50,12 +50,9 @@ class RecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ('pk', 'title', 'author', 'ingredients', 'tags', 'steps', 'notes', 'created_time', 'modified_time')
 
+
 class RecipeListSerializer(serializers.HyperlinkedModelSerializer):
     author = serializers.StringRelatedField()
-    url = RecipeSerializer(
-        read_only=True,
-        required=False
-    )
 
     num_ingredients = serializers.IntegerField(source='recipe_ingredients.count', read_only=True)
     num_steps = serializers.IntegerField(source='steps.count', read_only=True)

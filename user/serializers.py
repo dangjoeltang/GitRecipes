@@ -6,17 +6,19 @@ from rest_framework.authtoken.models import Token
 
 from user.models import UserAccount, UserProfile
 from recipe.models import Recipe
+from recipe.serializers import RecipeListSerializer
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    # author_recipes = serializers.HyperlinkedIdentityField(
-    #     view_name='recipe-list',
-    #     many=True,
-    # )
+    author_recipes = RecipeListSerializer(
+        many=True,
+    )
+
+    user_account = serializers.StringRelatedField()
 
     class Meta:
         model = UserProfile
-        fields = '__all__'
+        fields = ('id', 'user_account', 'first_name', 'last_name', 'author_recipes')
         extra_kwargs = {
             'url': {'view_name': 'userprofile-detail'},
         }
@@ -35,7 +37,8 @@ class UserAccountSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'useraccount-detail'},
             'password': {'write_only': True}
-        }
+        },
+        
 
     def create(self, validated_data):
         profile_data = validated_data.pop('profile')
