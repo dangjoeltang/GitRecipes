@@ -10,21 +10,28 @@ from recipe.serializers import RecipeListSerializer
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    author_recipes = RecipeListSerializer(
+    author_recipes = serializers.HyperlinkedRelatedField(
         many=True,
+        read_only=True,
+        view_name='recipe-detail'
     )
 
     user_account = serializers.StringRelatedField()
+    recipe_count = serializers.IntegerField(source='author_recipes.count', read_only=True)
 
     class Meta:
         model = UserProfile
-        fields = ('id', 'user_account', 'first_name', 'last_name', 'author_recipes')
+        fields = ('id', 'user_account', 'first_name', 'last_name', 'recipe_count', 'author_recipes')
         extra_kwargs = {
             'url': {'view_name': 'profile-detail'},
         }
 
 
 class UserAccountSerializer(serializers.ModelSerializer):
+    profile = serializers.HyperlinkedRelatedField(
+        read_only=True,
+        view_name='profile-detail'
+    )
 
     class Meta:
         model = UserAccount

@@ -5,7 +5,7 @@ from .views import RecipeViewSet, RecipeListView, RecipeDetailView
 # router = routers.DefaultRouter()
 # router.register('recipes', RecipeList())
 # # router.register('recipes', RecipeList.as_view(), name='recipe-list')
-app_name = 'recipe'
+
 urlpatterns = [
     # path('', include(router.urls)),
     path('recipes/', RecipeListView.as_view(), name='recipe-list'),
