@@ -11,7 +11,11 @@ class UserAccount(AbstractUser):
 
 
 class UserProfile(models.Model):
-    user_account = models.OneToOneField(UserAccount, on_delete=models.CASCADE, related_name='profile')
+    user_account = models.OneToOneField(
+        UserAccount,
+        on_delete=models.CASCADE,
+        related_name='profile'
+    )
     first_name = models.CharField(max_length=25)
     last_name = models.CharField(max_length=25)
 
