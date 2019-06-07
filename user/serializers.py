@@ -25,10 +25,15 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class UserAccountSerializer(serializers.ModelSerializer):
+    profile = serializers.HyperlinkedRelatedField(
+        required=False,
+        view_name='profile-detail',
+        queryset=UserProfile.objects.all()
+    )
 
     class Meta:
         model = UserAccount
-        fields = ('id', 'url', 'email', 'username', 'first_name', 'last_name', 'profile')
+        fields = ('id', 'url', 'email', 'username', 'password', 'first_name', 'last_name', 'profile')
         extra_kwargs = {
             'url': {'view_name': 'account-detail'},
             'password': {'write_only': True}
@@ -37,12 +42,18 @@ class UserAccountSerializer(serializers.ModelSerializer):
         
 
     def create(self, validated_data):
-        profile_data = validated_data.pop('profile')
+        print(validated_data)
+        # profile_data = validated_data.pop('profile')
         password = validated_data.pop('password')
         user = UserAccount(**validated_data)
         user.set_password(password)
         user.save()
-        UserProfile.objects.create(user_account=user, **profile_data)
+        profile = UserProfile.objects.create(
+            user_account=user,
+            first_name=user.first_name,
+            last_name=user.last_name
+        )
+        profile.save()
         return user
     
     def update(self, instance, validated_data):
