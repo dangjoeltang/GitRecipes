@@ -1,1 +1,0 @@
-Recipe Serializers, Views, urls, admiin
