@@ -8,7 +8,7 @@ class UserAccountAPIViewTest(APITestCase):
     url = reverse('account-list')
 
     def setUp(self):
-        UserAccount.objects.create(
+        UserAccount.objects.create_user(
             email = 'test@unittest.com',
             username = 'unittest',
             first_name = 'unit',
