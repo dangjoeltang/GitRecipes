@@ -66,12 +66,12 @@ class RecipeSerializer(serializers.ModelSerializer):
  
     def update(self, instance, validated_data):
         recipe_ingredients_data = validated_data.pop('recipe_ingredients')
-        recipe_ingredients = instance.recipe_ingredients
-
+        
+        recipe_ingredients = []
         for recipe_ingredient_data in recipe_ingredients_data:
 
             print(recipe_ingredient_data)
-            ingredient, created = Ingredient.objects.get_or_create(name=recipe_ingredient_data['ingredient'])
+            # ingredient, created = Ingredient.objects.get_or_create(name=recipe_ingredient_data['ingredient'])
             recipe_ingredient = RecipeIngredient.objects.create(
                 ingredient = ingredient,
                 recipe = instance,
@@ -79,9 +79,9 @@ class RecipeSerializer(serializers.ModelSerializer):
                 quantity_unit = recipe_ingredient_data.get('quantity_unit')
             )
             recipe_ingredient.save()
-            recipe_ingredients.add(recipe_ingredient)
+            # recipe_ingredients.append(recipe_ingredient)
         
-        
+        # instance.recipe_ingredients.set(recipe_ingredients)
         return instance
 
 
