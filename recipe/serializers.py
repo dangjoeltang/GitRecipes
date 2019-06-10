@@ -26,9 +26,14 @@ class IngredientSerializer(serializers.ModelSerializer):
     
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
-    ingredient = serializers.StringRelatedField()
-    quantity_amount = serializers.StringRelatedField()
-    quantity_unit = serializers.StringRelatedField()
+    # ingredient = IngredientSerializer()
+    ingredient = serializers.SlugRelatedField(
+        slug_field = 'name',
+        queryset = Ingredient.objects.all()
+    )
+
+    quantity_amount = serializers.CharField()
+    quantity_unit = serializers.CharField()
     
     class Meta:
         model = RecipeIngredient
@@ -58,38 +63,29 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ('pk', 'title', 'author', 'ingredients', 'tags', 'steps', 'notes', 'created_time', 'modified_time')
+ 
+    def update(self, instance, validated_data):
+        recipe_ingredients_data = validated_data.pop('recipe_ingredients')
+        recipe_ingredients = instance.recipe_ingredients
 
-    def create(self, validated_data):
-        ingredients_data = validated_data.pop('ingredients')
-        tags_data = validated_data.pop('tags')
-        steps_data = validated_data.pop('steps')
+        for recipe_ingredient_data in recipe_ingredients_data:
 
-        print(validated_data)
-        author_profile = UserProfile.objects.get(user_account=author)
-        recipe = Recipe.objects.create(
-            author_id = author_profile.id
-            **validated_data
-        )
-        for ingredient in ingredients_data:
-            RecipeIngredient.objects.create(
-                ingredient, created = Ingredient.objects.get_or_create(name=ingredient['name'])
-                **recipe_ingredient_data
-                # quantity_amount = ingredient['quantity_amount']
-                # quantity_unit = ingredient['quantity_unit']
-                # ingredient, created = Ingredient.objects.get_or_create(name=ingredient_data['name'])
-                # quantity_amount = ingredient_data['quantity_amount']
-                # quantity_unit = ingredient_data['quantity_unit']
+            print(recipe_ingredient_data)
+            ingredient, created = Ingredient.objects.get_or_create(name=recipe_ingredient_data['ingredient'])
+            recipe_ingredient = RecipeIngredient.objects.create(
+                ingredient = ingredient,
+                recipe = instance,
+                quantity_amount = recipe_ingredient_data.get('quantity_amount'),
+                quantity_unit = recipe_ingredient_data.get('quantity_unit')
             )
-            recipe.ingredients.add(ingredient)
-        recipe.save()
-        return recipe
+            recipe_ingredient.save()
+            recipe_ingredients.add(recipe_ingredient)
+        
+        
+        return instance
 
 
 class RecipeListSerializer(serializers.HyperlinkedModelSerializer):
-    # author = serializers.HyperlinkedRelatedField(
-    #     queryset = UserProfile.objects.all(),
-    #     view_name = 'profile-detail'
-    # )
     author = serializers.PrimaryKeyRelatedField(
         queryset = UserProfile.objects.all()
     )

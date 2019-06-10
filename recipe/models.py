@@ -157,7 +157,7 @@ class RecipeIngredient(models.Model):
         verbose_name_plural='Ingredients used in Recipe'
     
     def __str__(self):
-        return '{0} - {1} {2}'.format(self.ingredient.name, self.quantity_amount, self.quantity_unit)
+        return '{0} - {1} {2}'.format(self.ingredient, self.quantity_amount, self.quantity_unit)
 
 
 class RecipeTag(models.Model):
