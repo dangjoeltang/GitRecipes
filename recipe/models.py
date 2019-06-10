@@ -12,7 +12,8 @@ class Ingredient(models.Model):
         max_length=64
     )
     description = models.TextField(
-        verbose_name='Ingredient Description'
+        verbose_name='Ingredient Description',
+        blank=True
     )
 
     created_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
