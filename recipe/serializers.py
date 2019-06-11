@@ -134,9 +134,10 @@ class RecipeIngredientSetSerializer(serializers.ModelSerializer):
     )
 
     ingredient = IngredientSerializer()
-    # ingredient = serializers.SlugRelatedField(
+    # ingredient_name = serializers.SlugRelatedField(
     #     slug_field = 'name',
-    #     queryset = Ingredient.objects.all()
+    #     # queryset = Ingredient.objects.all(),
+    #     read_only = True
     # )
 
     def create(self, validated_data):
@@ -150,6 +151,13 @@ class RecipeIngredientSetSerializer(serializers.ModelSerializer):
         recipe_ingredient.ingredient = ingredient
         recipe_ingredient.save()
         return recipe_ingredient
+
+    def update(self, instance, validated_data):
+        # recipe_ingredient_data = validated_data.pop('ingredient')
+        instance.quantity_amount = validated_data.get('quantity_amount', instance.quantity_amount)
+        instance.quantity_unit = validated_data.get('quantity_unit', instance.quantity_unit)
+        instance.save()
+        return instance
 
     class Meta:
         model = RecipeIngredient
