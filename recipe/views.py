@@ -37,3 +37,15 @@ class RecipeIngredientSetView(generics.ListCreateAPIView):
     def get_queryset(self):
         recipe_pk = self.kwargs['pk']
         return RecipeIngredient.objects.filter(recipe__pk = recipe_pk)
+
+
+class RecipeIngredientDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = RecipeIngredient.objects.all()
+    serializer_class = RecipeIngredientSetSerializer
+    lookup_fields = ('id')
+
+    def get_queryset(self):
+        recipe_pk = self.kwargs['pk']
+        recipe_ingredient_pk = self.kwargs['id']
+
+        return RecipeIngredient.objects.get(id=recipe_ingredient_pk)
