@@ -142,7 +142,6 @@ class RecipeIngredientSetSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         ingredient_data = validated_data.pop('ingredient')
-        print(ingredient_data)
         ingredient, created = Ingredient.objects.get_or_create(
             name = ingredient_data.get('name'),
             defaults = {'description': 'No description provided'}
@@ -153,7 +152,8 @@ class RecipeIngredientSetSerializer(serializers.ModelSerializer):
         return recipe_ingredient
 
     def update(self, instance, validated_data):
-        # recipe_ingredient_data = validated_data.pop('ingredient')
+        # No need to change ingredient model. Just delete and add new ingredient
+        # PUT for recipe_ingredient is jsut for updating quantity details
         instance.quantity_amount = validated_data.get('quantity_amount', instance.quantity_amount)
         instance.quantity_unit = validated_data.get('quantity_unit', instance.quantity_unit)
         instance.save()

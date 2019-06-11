@@ -97,20 +97,20 @@ class BaseModelsTest(APITestCase):
         self.assertEqual(201, response.status_code)
     
     def test_add_recipe_ingredient(self):
-        recipe_ingredient_data = {
-            "recipe": self.recipe.id,
-            "ingredient": "ingredient X",
-            "quantity_amount": "2",
-            "quantity_unit": "grams"
-        }
         # recipe_ingredient_data = {
         #     "recipe": self.recipe.id,
-        #     "ingredient": {
-        #         "name": "ingredient X"
-        #     },
+        #     "ingredient": "ingredient X",
         #     "quantity_amount": "2",
         #     "quantity_unit": "grams"
         # }
+        recipe_ingredient_data = {
+            "recipe": self.recipe.id,
+            "ingredient": {
+                "name": "ingredient X"
+            },
+            "quantity_amount": "2",
+            "quantity_unit": "grams"
+        }
 
         kwargs = {'pk': self.recipe.id}
         url = reverse('recipe-ingredients-list', kwargs=kwargs)
