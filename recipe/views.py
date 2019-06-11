@@ -53,7 +53,6 @@ class RecipeIngredientSetView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         recipe_pk = self.kwargs['pk']
-        # print(RecipeIngredient.objects.filter(recipe__pk = recipe_pk))
         return RecipeIngredient.objects.filter(recipe__pk = recipe_pk)
 
 

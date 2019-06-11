@@ -99,14 +99,14 @@ class RecipeStep(models.Model):
         return str(self.step_number)
 
     # Deleting a middle step will not decrement all the following steps
-    def save(self, force_insert=False, force_update=False):
-        if self.step_number == 0:
-            try:
-                recent = RecipeStep.objects.filter(recipe__exact=self.recipe).order_by('-step_number')[0]
-                self.step_number = recent.step_number + 1
-            except IndexError:
-                self.step_number = 1
-        super(RecipeStep, self).save(force_insert, force_update)
+    # def save(self, force_insert=False, force_update=False):
+    #     if self.step_number == 0:
+    #         try:
+    #             recent = RecipeStep.objects.filter(recipe__exact=self.recipe).order_by('-step_number')[0]
+    #             self.step_number = recent.step_number + 1
+    #         except IndexError:
+    #             self.step_number = 1
+    #     super(RecipeStep, self).save(force_insert, force_update)
 
 
 class RecipeNote(models.Model):

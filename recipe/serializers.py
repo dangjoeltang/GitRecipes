@@ -18,11 +18,18 @@ class AuthorSerializer(serializers.ModelSerializer):
         fields = ('id',)
 
 
+class IngredientDetailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Ingredient
+        fields = ('id', 'name', 'description')
+
+
 class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredient
-        fields = ('name', 'description')
+        fields = ('id', 'name')
     
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
@@ -120,16 +127,29 @@ class RecipeListSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class RecipeIngredientSetSerializer(serializers.ModelSerializer):
-    recipe = serializers.HyperlinkedRelatedField(
-        view_name='recipe-detail',
-        read_only=True
+    recipe = serializers.PrimaryKeyRelatedField(
+        # view_name='recipe-detail',
+        # read_only=True
+        queryset = Recipe.objects.all()
     )
 
-    # ingredient = IngredientSerializer()
-    ingredient = serializers.SlugRelatedField(
-        slug_field = 'name',
-        queryset = Ingredient.objects.all()
-    )
+    ingredient = IngredientSerializer()
+    # ingredient = serializers.SlugRelatedField(
+    #     slug_field = 'name',
+    #     queryset = Ingredient.objects.all()
+    # )
+
+    def create(self, validated_data):
+        ingredient_data = validated_data.pop('ingredient')
+        print(ingredient_data)
+        ingredient, created = Ingredient.objects.get_or_create(
+            name = ingredient_data.get('name'),
+            defaults = {'description': 'No description provided'}
+        )
+        recipe_ingredient = RecipeIngredient(**validated_data)
+        recipe_ingredient.ingredient = ingredient
+        recipe_ingredient.save()
+        return recipe_ingredient
 
     class Meta:
         model = RecipeIngredient
