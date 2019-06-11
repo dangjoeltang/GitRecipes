@@ -67,21 +67,20 @@ class RecipeSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         recipe_ingredients_data = validated_data.pop('recipe_ingredients')
         
-        recipe_ingredients = []
-        for recipe_ingredient_data in recipe_ingredients_data:
+        recipe_ingredients = instance.recipe_ingredients
 
-            print(recipe_ingredient_data)
-            # ingredient, created = Ingredient.objects.get_or_create(name=recipe_ingredient_data['ingredient'])
-            recipe_ingredient = RecipeIngredient.objects.create(
-                ingredient = ingredient,
+        # Check for updates with a recipe ingredient's quantity for this recipe
+        for recipe_ingredient_data in recipe_ingredients_data:
+            recipe_ingredient, created = RecipeIngredient.objects.update_or_create(
+                ingredient = recipe_ingredient_data.get('ingredient', None),
                 recipe = instance,
-                quantity_amount = recipe_ingredient_data.get('quantity_amount'),
-                quantity_unit = recipe_ingredient_data.get('quantity_unit')
+                defaults = {
+                    'quantity_amount': recipe_ingredient_data.get('quantity_amount', None),
+                    'quantity_unit': recipe_ingredient_data.get('quantity_unit')
+                }
             )
             recipe_ingredient.save()
-            # recipe_ingredients.append(recipe_ingredient)
-        
-        # instance.recipe_ingredients.set(recipe_ingredients)
+
         return instance
 
 
@@ -119,3 +118,19 @@ class RecipeListSerializer(serializers.HyperlinkedModelSerializer):
         # recipe.save()
         return recipe
 
+
+class RecipeIngredientSetSerializer(serializers.ModelSerializer):
+    recipe = serializers.HyperlinkedRelatedField(
+        view_name='recipe-detail',
+        read_only=True
+    )
+
+    # ingredient = IngredientSerializer()
+    ingredient = serializers.SlugRelatedField(
+        slug_field = 'name',
+        queryset = Ingredient.objects.all()
+    )
+
+    class Meta:
+        model = RecipeIngredient
+        fields = '__all__'

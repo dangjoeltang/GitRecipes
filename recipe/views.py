@@ -28,3 +28,12 @@ class IngredientViewset(viewsets.ModelViewSet):
 class TagViewset(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+
+
+class RecipeIngredientSetView(generics.ListCreateAPIView):
+    queryset = RecipeIngredient.objects.all()
+    serializer_class = RecipeIngredientSetSerializer
+
+    def get_queryset(self):
+        recipe_pk = self.kwargs['pk']
+        return RecipeIngredient.objects.filter(recipe__pk = recipe_pk)
