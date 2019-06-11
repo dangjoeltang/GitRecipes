@@ -5,6 +5,23 @@ from .models import *
 from .serializers import *
 
 
+class MultipleFieldLookupMixin(object):
+    """
+    Apply this mixin to any view or viewset to get multiple field filtering
+    based on a `lookup_fields` attribute, instead of the default single field filtering.
+    """
+    def get_object(self):
+        queryset = self.get_queryset()             # Get the base queryset
+        queryset = self.filter_queryset(queryset)  # Apply any filter backends
+        filter = {}
+        for field in self.lookup_fields:
+            if self.kwargs[field]: # Ignore empty fields.
+                filter[field] = self.kwargs[field]
+        obj = get_object_or_404(queryset, **filter)  # Lookup the object 
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
@@ -36,16 +53,17 @@ class RecipeIngredientSetView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         recipe_pk = self.kwargs['pk']
+        # print(RecipeIngredient.objects.filter(recipe__pk = recipe_pk))
         return RecipeIngredient.objects.filter(recipe__pk = recipe_pk)
 
 
 class RecipeIngredientDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = RecipeIngredient.objects.all()
     serializer_class = RecipeIngredientSetSerializer
-    lookup_fields = ('id')
+    lookup_field = 'id'
 
     def get_queryset(self):
         recipe_pk = self.kwargs['pk']
         recipe_ingredient_pk = self.kwargs['id']
 
-        return RecipeIngredient.objects.get(id=recipe_ingredient_pk)
+        return RecipeIngredient.objects.filter(recipe__pk = recipe_pk)
