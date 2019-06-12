@@ -126,14 +126,11 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=10),
-    'ROTATE_REFRESH_TOKENS': False,
-    'BLACKLIST_AFTER_ROTATION': True,
+    'ACCESS_TOKEN_LIFETIME': os.getenv("ACCESS_TOKEN_LIFETIME"),
+    'REFRESH_TOKEN_LIFETIME': os.getenv("REFRESH_TOKEN_LIFETIME"),
 
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': 'superamazingsecretkey1010101010101010101',
-    'VERIFYING_KEY': None,
+    'SIGNING_KEY': os.getenv('SIGNING_KEY'),
+
 
     'AUTH_HEADER_TYPES': ('Bearer',),
     'USER_ID_FIELD': 'id',
@@ -143,12 +140,7 @@ SIMPLE_JWT = {
     'TOKEN_TYPE_CLAIM': 'token_type',
 
     'JTI_CLAIM': 'jti',
-
-    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
-    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
