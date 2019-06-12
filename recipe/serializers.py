@@ -11,14 +11,25 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipeTagSerializer(serializers.ModelSerializer):
-    tag = serializers.SlugRelatedField(
-        slug_field = 'tag_text',
-        queryset = Tag.objects.all()
-    )
+    tag = TagSerializer()
+    # tag = serializers.SlugRelatedField(
+    #     slug_field = 'tag_text',
+    #     queryset = Tag.objects.all()
+    # )
 
     class Meta:
         model = RecipeTag
         fields = ('id', 'tag')
+    
+    def create(self, validated_data):
+        tag_data = validated_data.pop('tag')
+        tag, created = Tag.objects.get_or_create(
+            tag_text = tag_data.get('tag_text')
+        )
+        recipe_tag = RecipeTag(**validated_data)
+        recipe_tag.tag = tag
+        recipe_tag.save()
+        return recipe_tag
 
 
 class IngredientDetailSerializer(serializers.ModelSerializer):
