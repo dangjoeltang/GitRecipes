@@ -34,6 +34,10 @@ class RecipeTagListView(generics.ListCreateAPIView):
         recipe_pk = self.kwargs['pk']
         return RecipeTag.objects.filter(recipe__pk = recipe_pk)
 
+    def perform_create(self, serializer):
+        recipe = Recipe.objects.get(id=self.kwargs['pk'])
+        serializer.save(recipe=recipe)
+
 
 class RecipeTagDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = RecipeTag.objects.all()
@@ -52,6 +56,10 @@ class RecipeIngredientListView(generics.ListCreateAPIView):
     def get_queryset(self):
         recipe_pk = self.kwargs['pk']
         return RecipeIngredient.objects.filter(recipe__pk = recipe_pk)
+
+    def perform_create(self, serializer):
+        recipe = Recipe.objects.get(id=self.kwargs['pk'])
+        serializer.save(recipe=recipe)
 
 
 class RecipeIngredientDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -74,6 +82,10 @@ class RecipeStepListView(generics.ListCreateAPIView):
         recipe_pk = self.kwargs['pk']
         return RecipeStep.objects.filter(recipe__pk = recipe_pk)
 
+    def perform_create(self, serializer):
+        recipe = Recipe.objects.get(id=self.kwargs['pk'])
+        serializer.save(recipe=recipe)
+
 
 class RecipeStepDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = RecipeStep.objects.all()
@@ -92,6 +104,10 @@ class RecipeNoteListView(generics.ListCreateAPIView):
     def get_queryset(self):
         recipe_pk = self.kwargs['pk']
         return RecipeNote.objects.filter(recipe__pk = recipe_pk)
+
+    def perform_create(self, serializer):
+        recipe = Recipe.objects.get(id=self.kwargs['pk'])
+        serializer.save(recipe=recipe)
 
 
 class RecipeNoteDetailView(generics.RetrieveUpdateDestroyAPIView):

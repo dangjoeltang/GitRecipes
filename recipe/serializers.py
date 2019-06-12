@@ -18,7 +18,7 @@ class RecipeTagSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RecipeTag
-        fields = ('id', 'recipe', 'tag')
+        fields = ('id', 'tag')
 
 
 class IngredientDetailSerializer(serializers.ModelSerializer):
@@ -144,9 +144,9 @@ class RecipeListSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class RecipeIngredientSetSerializer(serializers.ModelSerializer):
-    recipe = serializers.PrimaryKeyRelatedField(
-        queryset = Recipe.objects.all()
-    )
+    # recipe = serializers.PrimaryKeyRelatedField(
+    #     queryset = Recipe.objects.all()
+    # )
 
     ingredient = IngredientSerializer()
 
@@ -171,4 +171,5 @@ class RecipeIngredientSetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RecipeIngredient
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ('recipe',)
