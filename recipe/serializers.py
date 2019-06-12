@@ -73,52 +73,7 @@ class RecipeNoteSerializer(serializers.ModelSerializer):
         fields = ('id', 'note_text')
 
 
-class RecipeSerializer(serializers.ModelSerializer):
-    author = serializers.StringRelatedField()
-    # recipe_ingredients = serializers.StringRelatedField(many=True)
-    ingredients = RecipeIngredientSerializer(source='recipe_ingredients', many=True)
-    steps = RecipeStepSerializer(many=True)
-    tags = TagSerializer(many=True)
-    notes = RecipeNoteSerializer(many=True)
 
-    class Meta:
-        model = Recipe
-        fields = ('pk', 'title', 'author', 'ingredients', 'tags', 'steps', 'notes', 'created_time', 'modified_time')
- 
-    def update(self, instance, validated_data):
-        instance.title = validated_data['title']
-        instance.save()
-
-        # Update Ingredients
-        recipe_ingredients_data = validated_data.pop('recipe_ingredients')
-        
-        recipe_ingredients = instance.recipe_ingredients
-
-        # Check for updates with a recipe ingredient's quantity for this recipe
-        for recipe_ingredient_data in recipe_ingredients_data:
-            recipe_ingredient, created = RecipeIngredient.objects.update_or_create(
-                ingredient = recipe_ingredient_data.get('ingredient', None),
-                recipe = instance,
-                defaults = {
-                    'quantity_amount': recipe_ingredient_data.get('quantity_amount', None),
-                    'quantity_unit': recipe_ingredient_data.get('quantity_unit')
-                }
-            )
-            recipe_ingredient.save()
-        
-        # Update Tags
-        # Delete removed tags
-        # tag_ids = [tag.get('id') for tag in validated_data['tags']]
-        # print(tag_ids)
-        # for tag in instance.tags:
-        #     if tag.id not in tag_ids:
-        #         tag.delete()
-        
-        # for tag in validated_data['tags']:
-        #     tag, created = Tag.objects.get_or_create(tag_text = tag['tag_text'])
-        #     recipe_tag = RecipeTag.objects.create(tag=tag, recipe=instance)
-
-        return instance
 
 
 class RecipeListSerializer(serializers.HyperlinkedModelSerializer):
@@ -184,3 +139,50 @@ class RecipeIngredientSetSerializer(serializers.ModelSerializer):
         model = RecipeIngredient
         # fields = '__all__'
         exclude = ('recipe',)
+
+
+class RecipeSerializer(serializers.ModelSerializer):
+    author = serializers.StringRelatedField()
+    ingredients = RecipeIngredientSetSerializer(source='recipe_ingredients', many=True)
+    steps = RecipeStepSerializer(many=True)
+    tags = TagSerializer(many=True)
+    notes = RecipeNoteSerializer(many=True)
+
+    class Meta:
+        model = Recipe
+        fields = ('pk', 'title', 'author', 'ingredients', 'tags', 'steps', 'notes', 'created_time', 'modified_time')
+ 
+    def update(self, instance, validated_data):
+        instance.title = validated_data['title']
+        instance.save()
+
+        # Update Ingredients
+        recipe_ingredients_data = validated_data.pop('recipe_ingredients')
+        
+        recipe_ingredients = instance.recipe_ingredients
+
+        # Check for updates with a recipe ingredient's quantity for this recipe
+        for recipe_ingredient_data in recipe_ingredients_data:
+            recipe_ingredient, created = RecipeIngredient.objects.update_or_create(
+                ingredient = recipe_ingredient_data.get('ingredient', None),
+                recipe = instance,
+                defaults = {
+                    'quantity_amount': recipe_ingredient_data.get('quantity_amount', None),
+                    'quantity_unit': recipe_ingredient_data.get('quantity_unit')
+                }
+            )
+            recipe_ingredient.save()
+        
+        # Update Tags
+        # Delete removed tags
+        # tag_ids = [tag.get('id') for tag in validated_data['tags']]
+        # print(tag_ids)
+        # for tag in instance.tags:
+        #     if tag.id not in tag_ids:
+        #         tag.delete()
+        
+        # for tag in validated_data['tags']:
+        #     tag, created = Tag.objects.get_or_create(tag_text = tag['tag_text'])
+        #     recipe_tag = RecipeTag.objects.create(tag=tag, recipe=instance)
+
+        return instance
