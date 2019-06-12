@@ -97,12 +97,6 @@ class BaseModelsTest(APITestCase):
         self.assertEqual(201, response.status_code)
     
     def test_add_recipe_ingredient(self):
-        # recipe_ingredient_data = {
-        #     "recipe": self.recipe.id,
-        #     "ingredient": "ingredient X",
-        #     "quantity_amount": "2",
-        #     "quantity_unit": "grams"
-        # }
         recipe_ingredient_data = {
             "recipe": self.recipe.id,
             "ingredient": {
@@ -161,3 +155,9 @@ class ModifyDeleteTest(APITestCase):
             quantity_amount = 5,
             quantity_unit = 'test units'
         )
+    
+    def test_modify_recipe(self):
+        pass
+
+    def test_modify_recipe_ingredient(self):
+        pass

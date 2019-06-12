@@ -7,15 +7,18 @@ class TagSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tag
-        fields = ('tag_text',)
+        fields = ('id', 'tag_text',)
 
 
-class AuthorSerializer(serializers.ModelSerializer):
-    
+class RecipeTagSerializer(serializers.ModelSerializer):
+    tag = serializers.SlugRelatedField(
+        slug_field = 'tag_text',
+        queryset = Tag.objects.all()
+    )
 
     class Meta:
-        model = UserProfile
-        fields = ('id',)
+        model = RecipeTag
+        fields = ('id', 'recipe', 'tag')
 
 
 class IngredientDetailSerializer(serializers.ModelSerializer):
@@ -56,7 +59,7 @@ class RecipeStepSerializer(serializers.ModelSerializer):
 class RecipeNoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecipeNote
-        fields = ('note_text',)
+        fields = ('id', 'note_text')
 
 
 class RecipeSerializer(serializers.ModelSerializer):
@@ -72,6 +75,10 @@ class RecipeSerializer(serializers.ModelSerializer):
         fields = ('pk', 'title', 'author', 'ingredients', 'tags', 'steps', 'notes', 'created_time', 'modified_time')
  
     def update(self, instance, validated_data):
+        instance.title = validated_data['title']
+        instance.save()
+
+        # Update Ingredients
         recipe_ingredients_data = validated_data.pop('recipe_ingredients')
         
         recipe_ingredients = instance.recipe_ingredients
@@ -87,6 +94,18 @@ class RecipeSerializer(serializers.ModelSerializer):
                 }
             )
             recipe_ingredient.save()
+        
+        # Update Tags
+        # Delete removed tags
+        tag_ids = [tag.get('id') for tag in validated_data['tags']]
+        print(tag_ids)
+        for tag in instance.tags:
+            if tag.id not in tag_ids:
+                tag.delete()
+        
+        for tag in validated_data['tags']:
+            tag, created = Tag.objects.get_or_create(tag_text = tag['tag_text'])
+            recipe_tag = RecipeTag.objects.create(tag=tag, recipe=instance)
 
         return instance
 
@@ -120,25 +139,16 @@ class RecipeListSerializer(serializers.HyperlinkedModelSerializer):
         for tag in tags_data:
             tag, created = Tag.objects.get_or_create(tag_text=tag['tag_text'])
             recipe_tag = RecipeTag.objects.create(tag=tag, recipe=recipe)
-            # recipe.tags.add(recipe_tag)
             recipe_tag.save()
-        # recipe.save()
         return recipe
 
 
 class RecipeIngredientSetSerializer(serializers.ModelSerializer):
     recipe = serializers.PrimaryKeyRelatedField(
-        # view_name='recipe-detail',
-        # read_only=True
         queryset = Recipe.objects.all()
     )
 
     ingredient = IngredientSerializer()
-    # ingredient_name = serializers.SlugRelatedField(
-    #     slug_field = 'name',
-    #     # queryset = Ingredient.objects.all(),
-    #     read_only = True
-    # )
 
     def create(self, validated_data):
         ingredient_data = validated_data.pop('ingredient')

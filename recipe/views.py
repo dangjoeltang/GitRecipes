@@ -1,30 +1,19 @@
 from rest_framework import viewsets
 from rest_framework import generics
+from rest_framework import mixins
 
 from .models import *
 from .serializers import *
 
 
-class MultipleFieldLookupMixin(object):
-    """
-    Apply this mixin to any view or viewset to get multiple field filtering
-    based on a `lookup_fields` attribute, instead of the default single field filtering.
-    """
-    def get_object(self):
-        queryset = self.get_queryset()             # Get the base queryset
-        queryset = self.filter_queryset(queryset)  # Apply any filter backends
-        filter = {}
-        for field in self.lookup_fields:
-            if self.kwargs[field]: # Ignore empty fields.
-                filter[field] = self.kwargs[field]
-        obj = get_object_or_404(queryset, **filter)  # Lookup the object 
-        self.check_object_permissions(self.request, obj)
-        return obj
+class IngredientViewset(viewsets.ModelViewSet):
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientDetailSerializer
 
 
-class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all()
-    serializer_class = RecipeSerializer
+class TagViewset(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
 
 
 class RecipeListView(generics.ListCreateAPIView):
@@ -37,17 +26,26 @@ class RecipeDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = RecipeSerializer
 
 
-class IngredientViewset(viewsets.ModelViewSet):
-    queryset = Ingredient.objects.all()
-    serializer_class = IngredientSerializer
+class RecipeTagListView(generics.ListCreateAPIView):
+    queryset = RecipeTag.objects.all()
+    serializer_class = RecipeTagSerializer
+
+    def get_queryset(self):
+        recipe_pk = self.kwargs['pk']
+        return RecipeTag.objects.filter(recipe__pk = recipe_pk)
 
 
-class TagViewset(viewsets.ModelViewSet):
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
+class RecipeTagDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = RecipeTag.objects.all()
+    serializer_class = RecipeTagSerializer
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        recipe_pk = self.kwargs['pk']
+        return RecipeTag.objects.filter(recipe__pk = recipe_pk)
 
 
-class RecipeIngredientSetView(generics.ListCreateAPIView):
+class RecipeIngredientListView(generics.ListCreateAPIView):
     queryset = RecipeIngredient.objects.all()
     serializer_class = RecipeIngredientSetSerializer
 
@@ -66,3 +64,41 @@ class RecipeIngredientDetailView(generics.RetrieveUpdateDestroyAPIView):
         recipe_ingredient_pk = self.kwargs['id']
 
         return RecipeIngredient.objects.filter(recipe__pk = recipe_pk)
+
+
+class RecipeStepListView(generics.ListCreateAPIView):
+    queryset = RecipeStep.objects.all()
+    serializer_class = RecipeStepSerializer
+
+    def get_queryset(self):
+        recipe_pk = self.kwargs['pk']
+        return RecipeStep.objects.filter(recipe__pk = recipe_pk)
+
+
+class RecipeStepDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = RecipeStep.objects.all()
+    serializer_class = RecipeStepSerializer
+    lookup_field = 'step_number'
+
+    def get_queryset(self):
+        recipe_pk = self.kwargs['pk']
+        return RecipeStep.objects.filter(recipe__pk = recipe_pk)
+
+
+class RecipeNoteListView(generics.ListCreateAPIView):
+    queryset = RecipeNote.objects.all()
+    serializer_class = RecipeNoteSerializer
+    
+    def get_queryset(self):
+        recipe_pk = self.kwargs['pk']
+        return RecipeNote.objects.filter(recipe__pk = recipe_pk)
+
+
+class RecipeNoteDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = RecipeNote.objects.all()
+    serializer_class = RecipeNoteSerializer
+    lookup_field = 'id'
+    
+    def get_queryset(self):
+        recipe_pk = self.kwargs['pk']
+        return RecipeNote.objects.filter(recipe__pk = recipe_pk)
