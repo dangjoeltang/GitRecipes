@@ -31,7 +31,8 @@ class UserAccountSerializer(serializers.ModelSerializer):
     profile = serializers.HyperlinkedRelatedField(
         required=False,
         view_name='profile-detail',
-        queryset=UserProfile.objects.all()
+        # queryset=UserProfile.objects.all(),
+        read_only=True
     )
 
     class Meta:
@@ -42,11 +43,7 @@ class UserAccountSerializer(serializers.ModelSerializer):
             'password': {'write_only': True}
         }
 
-        
-
     def create(self, validated_data):
-        # print(validated_data)
-        # profile_data = validated_data.pop('profile')
         password = validated_data.pop('password')
         user = UserAccount(**validated_data)
         user.set_password(password)
@@ -56,18 +53,17 @@ class UserAccountSerializer(serializers.ModelSerializer):
             first_name=user.first_name,
             last_name=user.last_name
         )
-        profile.save()
         return user
     
-    def update(self, instance, validated_data):
-        profile_data = validated_data.pop('profile')
-        profile = instance.profile
+    # def update(self, instance, validated_data):
+    #     # profile_data = validated_data.pop('profile')
+    #     # profile = instance.profile
 
-        instance.email = validated_data.get('email', instance.email)
-        instance.save()
+    #     instance.username = validated_data.get('username', instance.username)
+    #     instance.save()
 
-        profile.first_name = profile_data.get('first_name', profile.first_name)
-        profile.last_name = profile_data.get('last_name', profile.last_name)
-        profile.save()
+    #     # profile.first_name = profile_data.get('first_name', profile.first_name)
+    #     # profile.last_name = profile_data.get('last_name', profile.last_name)
+    #     # profile.save()
 
-        return instance
+    #     return instance

@@ -108,15 +108,15 @@ class RecipeSerializer(serializers.ModelSerializer):
         
         # Update Tags
         # Delete removed tags
-        tag_ids = [tag.get('id') for tag in validated_data['tags']]
-        print(tag_ids)
-        for tag in instance.tags:
-            if tag.id not in tag_ids:
-                tag.delete()
+        # tag_ids = [tag.get('id') for tag in validated_data['tags']]
+        # print(tag_ids)
+        # for tag in instance.tags:
+        #     if tag.id not in tag_ids:
+        #         tag.delete()
         
-        for tag in validated_data['tags']:
-            tag, created = Tag.objects.get_or_create(tag_text = tag['tag_text'])
-            recipe_tag = RecipeTag.objects.create(tag=tag, recipe=instance)
+        # for tag in validated_data['tags']:
+        #     tag, created = Tag.objects.get_or_create(tag_text = tag['tag_text'])
+        #     recipe_tag = RecipeTag.objects.create(tag=tag, recipe=instance)
 
         return instance
 
