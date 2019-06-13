@@ -27,7 +27,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG') == True
+DEBUG = False
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
 # ALLOWED_HOSTS = ['*']
 
@@ -167,6 +167,11 @@ STATICFILES_DIRS = [
 
 # Configure Django App for Heroku.
 django_heroku.settings(locals())
+
+try:
+  from local_settings import *
+except Exception as e:
+  pass
 
 LOGGING = {
     'version': 1,
