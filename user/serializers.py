@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
-from rest_framework.authtoken.models import Token
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from user.models import UserAccount, UserProfile
 from recipe.models import Recipe
@@ -55,15 +55,14 @@ class UserAccountSerializer(serializers.ModelSerializer):
         )
         return user
     
-    # def update(self, instance, validated_data):
-    #     # profile_data = validated_data.pop('profile')
-    #     # profile = instance.profile
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
 
-    #     instance.username = validated_data.get('username', instance.username)
-    #     instance.save()
+        # Add custom claims
+        token['username'] = user.username
+        # token['email'] = user.email
+        # ...
 
-    #     # profile.first_name = profile_data.get('first_name', profile.first_name)
-    #     # profile.last_name = profile_data.get('last_name', profile.last_name)
-    #     # profile.save()
-
-    #     return instance
+        return token

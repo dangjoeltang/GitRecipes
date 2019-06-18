@@ -39,12 +39,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
     'recipe',
     'user'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -137,6 +139,9 @@ SIMPLE_JWT = {
 
     'JTI_CLAIM': 'jti',
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
