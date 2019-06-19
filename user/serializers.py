@@ -38,6 +38,7 @@ class UserAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAccount
         fields = ('id', 'url', 'email', 'username', 'password', 'first_name', 'last_name', 'profile')
+        # fields = '__all__'
         extra_kwargs = {
             'url': {'view_name': 'account-detail'},
             'password': {'write_only': True}
