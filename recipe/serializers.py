@@ -297,8 +297,7 @@ class GenericRecipeSerializer(serializers.ModelSerializer):
             tagObj, created = Tag.objects.get_or_create(
                 tag_text=tag['tag']
             )
-            # tagObj = Tag.objects.create(tag_text=tag['tag'])
-            # tagObj.save()
+            print(tagObj, created)
 
             recipe_tag, created = RecipeTag.objects.get_or_create(
                 tag=tagObj, recipe=instance)
