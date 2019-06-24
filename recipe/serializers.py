@@ -83,12 +83,11 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeStepSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField()
     step_number = serializers.IntegerField()
 
     class Meta:
         model = RecipeStep
-        fields = ('id', 'step_number', 'step_text')
+        fields = ('step_number', 'step_text')
 
 
 class RecipeNoteSerializer(serializers.ModelSerializer):
