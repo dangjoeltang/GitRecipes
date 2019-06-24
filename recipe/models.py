@@ -85,7 +85,7 @@ class RecipeStep(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='recipe_steps'
+        related_name='steps'
     )
     step_number = models.PositiveSmallIntegerField(
         default=0
