@@ -4,6 +4,16 @@ from .models import *
 from user.models import UserProfile
 
 
+class CustomSlugRelatedField(serializers.SlugRelatedField):
+    def to_internal_value(self, data):
+        try:
+            obj, created = self.get_queryset().get_or_create(
+                **{self.slug_field: data})
+            return obj
+        except (TypeError, ValueError):
+            self.fail('invalid')
+
+
 class TagSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -13,7 +23,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 class RecipeTagSerializer(serializers.ModelSerializer):
     # tag = TagSerializer()
-    tag = serializers.SlugRelatedField(
+    tag = CustomSlugRelatedField(
         slug_field='tag_text',
         queryset=Tag.objects.all()
     )
@@ -50,7 +60,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
-    ingredient = serializers.SlugRelatedField(
+    ingredient = CustomSlugRelatedField(
         slug_field='name',
         queryset=Ingredient.objects.all()
     )
@@ -235,7 +245,6 @@ class GenericRecipeSerializer(serializers.ModelSerializer):
         instance.title = validated_data['title']
         instance.author = validated_data['author']
         instance.save()
-        print('update')
 
         # Remove tags that were deleted
         new_tags = [tag['tag'] for tag in validated_data['recipe_tags']]
@@ -252,40 +261,34 @@ class GenericRecipeSerializer(serializers.ModelSerializer):
             # tagObj.save()
 
             recipe_tag = RecipeTag.objects.create(tag=tagObj, recipe=instance)
-            print(recipe_tag)
             # recipe_tag.save()
 
-        # # Remove ingredients that were deleted
-        # new_ingredients = [ing['ingredient']
-        #                    for ing in validated_data['recipe_ingredients']]
-        # print(new_ingredients)
-        # for ing in instance.recipe_ingredients.all():
-        #     if ing not in new_ingredients:
-        #         ing.delete()
+        # Remove ingredients that were deleted
+        new_ingredients = [ing['ingredient']
+                           for ing in validated_data['recipe_ingredients']]
+        print(new_ingredients)
+        for ing in instance.recipe_ingredients.all():
+            if ing not in new_ingredients:
+                ing.delete()
 
-        # # Create or update ingredients
-        # for ing in validated_data['recipe_ingredients']:
-        #     print(ing)
-        #     # ingObj, created = Ingredient.objects.get_or_create(
-        #     #     name=ing['ingredient']
-        #     # )
-        #     try:
-        #         ingObj = Ingredient.objects.get(name=ing['ingredient'])
-        #     except Ingredient.DoesNotExist:
-        #         ingObj = Ingredient(name=ing['ingredient'], description='')
-        #         ingObj.save()
+        # Create or update ingredients
+        for ing in validated_data['recipe_ingredients']:
+            ingObj, created = Ingredient.objects.get_or_create(
+                name=ing['ingredient']
+            )
+            # try:
+            #     ingObj = Ingredient.objects.get(name=ing['ingredient'])
+            # except Ingredient.DoesNotExist:
+            #     ingObj = Ingredient(name=ing['ingredient'], description='')
+            #     ingObj.save()
 
-        #     print(ingObj, created)
-
-        #     recipe_ingredient, created = RecipeIngredient.objects.update_or_create(
-        #         ingredient=ing['ingredient'],
-        #         recipe=instance,
-        #         defaults={
-        #             'quantity_amount': ing['quantity_amount'],
-        #             'quantity_unit': ing['quantity_unit']
-        #         }
-        #     )
-        #     print(recipe_ingredient)
-        #     recipe_ingredient.save()
+            recipe_ingredient, created = RecipeIngredient.objects.update_or_create(
+                ingredient=ing['ingredient'],
+                recipe=instance,
+                defaults={
+                    'quantity_amount': ing['quantity_amount'],
+                    'quantity_unit': ing['quantity_unit']
+                }
+            )
 
         return instance
