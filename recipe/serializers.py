@@ -248,10 +248,12 @@ class GenericRecipeSerializer(serializers.ModelSerializer):
             tagObj, created = Tag.objects.get_or_create(
                 tag_text=tag['tag']
             )
+            # tagObj = Tag.objects.create(tag_text=tag['tag'])
+            # tagObj.save()
 
             recipe_tag = RecipeTag.objects.create(tag=tagObj, recipe=instance)
             print(recipe_tag)
-            recipe_tag.save()
+            # recipe_tag.save()
 
         # # Remove ingredients that were deleted
         # new_ingredients = [ing['ingredient']
