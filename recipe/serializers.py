@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import *
-from user.models import UserProfile
+from user.models import UserProfile, UserAccount
 
 
 class CustomSlugRelatedField(serializers.SlugRelatedField):
@@ -19,6 +19,31 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = ('id', 'tag_text',)
+
+
+class IngredientDetailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Ingredient
+        fields = ('id', 'name', 'description')
+
+
+class IngredientSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Ingredient
+        fields = ('id', 'name')
+
+
+# class AuthorSerializer(serializers.ModelSerializer):
+#     user_account = serializers.SlugRelatedField(
+#         slug_field='username',
+#         queryset=UserAccount.objects.all()
+#     )
+
+#     class Meta:
+#         model = UserProfile
+#         fields = ('user_account',)
 
 
 class RecipeTagSerializer(serializers.ModelSerializer):
@@ -40,20 +65,6 @@ class RecipeTagSerializer(serializers.ModelSerializer):
         recipe_tag.tag = tag
         recipe_tag.save()
         return recipe_tag
-
-
-class IngredientDetailSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Ingredient
-        fields = ('id', 'name', 'description')
-
-
-class IngredientSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Ingredient
-        fields = ('id', 'name')
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
@@ -205,10 +216,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class GenericRecipeSerializer(serializers.ModelSerializer):
-    # author = serializers.SlugRelatedField(
-    #     slug_field='username',
-    #     queryset=UserProfile.objects.all()
-    # )
+    # author = serializers.StringRelatedField()
 
     ingredients = RecipeIngredientSerializer(
         source='recipe_ingredients',
@@ -234,6 +242,44 @@ class GenericRecipeSerializer(serializers.ModelSerializer):
         # fields = '__all__'
         fields = ('pk', 'title', 'author', 'ingredients', 'tags',
                   'steps', 'notes', 'created_time', 'modified_time')
+
+    def create(self, validated_data):
+        author = validated_data.pop('author')
+        author_profile = UserProfile.objects.get(id=author.id)
+        tags_data = validated_data.pop('recipe_tags')
+        ingredients_data = validated_data.pop('recipe_ingredients')
+        steps_data = validated_data.pop('steps')
+        notes_data = validated_data.pop('notes')
+
+        recipe = Recipe(**validated_data)
+        recipe.author = author_profile
+        recipe.save()
+        for tag in tags_data:
+            tag, created = Tag.objects.get_or_create(tag_text=tag['tag'])
+            recipe_tag = RecipeTag.objects.create(tag=tag, recipe=recipe)
+
+        for ing in ingredients_data:
+            ingObj, created = Ingredient.objects.get_or_create(
+                name=ing['ingredient'])
+            recipe_ingredient = RecipeIngredient.objects.create(
+                ingredient=ingObj,
+                recipe=recipe,
+                quantity_amount=ing['quantity_amount'],
+                quantity_unit=ing['quantity_unit'])
+
+        for step in steps_data:
+            recipe_step = RecipeStep.objects.create(
+                recipe=recipe,
+                step_number=step['step_number'],
+                step_text=step['step_text']
+            )
+
+        for note in notes_data:
+            recipe_note = RecipeNote.objects.create(
+                recipe=recipe,
+                note_text=note['note_text']
+            )
+        return recipe
 
     def update(self, instance, validated_data):
         instance.title = validated_data['title']
