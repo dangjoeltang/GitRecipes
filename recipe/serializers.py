@@ -22,7 +22,6 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipeTagSerializer(serializers.ModelSerializer):
-    # tag = TagSerializer()
     tag = CustomSlugRelatedField(
         slug_field='tag_text',
         queryset=Tag.objects.all()
@@ -41,8 +40,6 @@ class RecipeTagSerializer(serializers.ModelSerializer):
         recipe_tag.tag = tag
         recipe_tag.save()
         return recipe_tag
-
-    # def update(self, instance, validated_data):
 
 
 class IngredientDetailSerializer(serializers.ModelSerializer):
@@ -73,17 +70,14 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
         fields = ('ingredient', 'quantity_amount', 'quantity_unit')
         # fields = '__all__'
 
-    # def create(self, validated_data):
-    #     ingredient_data = validated_data.pop('ingredient')
-    #     ingredient, created = Ingredient.objects.get_or_create(
-
-    #     )
-
 
 class RecipeStepSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
+    step_number = serializers.IntegerField()
+
     class Meta:
         model = RecipeStep
-        fields = ('step_number', 'step_text')
+        fields = ('id', 'step_number', 'step_text')
 
 
 class RecipeNoteSerializer(serializers.ModelSerializer):
@@ -249,7 +243,7 @@ class GenericRecipeSerializer(serializers.ModelSerializer):
         # Remove tags that were deleted
         new_tags = [tag['tag'] for tag in validated_data['recipe_tags']]
         for tag in instance.recipe_tags.all():
-            if tag not in new_tags:
+            if tag.tag not in new_tags:
                 tag.delete()
 
         # Create or update tags
@@ -260,15 +254,16 @@ class GenericRecipeSerializer(serializers.ModelSerializer):
             # tagObj = Tag.objects.create(tag_text=tag['tag'])
             # tagObj.save()
 
-            recipe_tag = RecipeTag.objects.create(tag=tagObj, recipe=instance)
+            recipe_tag, created = RecipeTag.objects.get_or_create(
+                tag=tagObj, recipe=instance)
             # recipe_tag.save()
 
         # Remove ingredients that were deleted
         new_ingredients = [ing['ingredient']
                            for ing in validated_data['recipe_ingredients']]
-        print(new_ingredients)
         for ing in instance.recipe_ingredients.all():
-            if ing not in new_ingredients:
+            if ing.ingredient not in new_ingredients:
+                print('DELETING', ing)
                 ing.delete()
 
         # Create or update ingredients
@@ -289,6 +284,37 @@ class GenericRecipeSerializer(serializers.ModelSerializer):
                     'quantity_amount': ing['quantity_amount'],
                     'quantity_unit': ing['quantity_unit']
                 }
+            )
+
+        # Steps
+        new_step_nums = [step['step_number']
+                         for step in validated_data['steps']]
+        for step in instance.steps.all():
+            if step.step_number not in new_step_nums:
+                print('DELETING', step)
+                step.delete()
+                # Something to decrement all steps after?
+
+        for step in validated_data['steps']:
+            recipe_step, created = RecipeStep.objects.update_or_create(
+                step_number=step['step_number'],
+                recipe=instance,
+                defaults={
+                    'step_text': step['step_text'],
+                }
+            )
+
+        # Notes
+        new_notes = [note['note_text'] for note in validated_data['notes']]
+        for note in instance.notes.all():
+            if note.note_text not in new_notes:
+                print('DELETING', note)
+                note.delete()
+
+        for note in validated_data['notes']:
+            recipe_note, created = RecipeNote.objects.get_or_create(
+                note_text=note['note_text'],
+                recipe=instance
             )
 
         return instance
