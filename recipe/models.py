@@ -6,6 +6,7 @@ from django.utils import timezone
 
 from user.models import UserProfile
 
+
 class Ingredient(models.Model):
     name = models.CharField(
         verbose_name='Ingredient Name',
@@ -16,12 +17,13 @@ class Ingredient(models.Model):
         blank=True
     )
 
-    created_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    created_time = models.DateTimeField(
+        auto_now_add=True, blank=True, null=True)
     modified_time = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     class Meta:
-        verbose_name='Ingredient'
-        verbose_name_plural='Ingredients'
+        verbose_name = 'Ingredient'
+        verbose_name_plural = 'Ingredients'
 
     def __str__(self):
         return self.name
@@ -33,12 +35,13 @@ class Tag(models.Model):
         max_length=24
     )
 
-    created_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    created_time = models.DateTimeField(
+        auto_now_add=True, blank=True, null=True)
     modified_time = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     class Meta:
-        verbose_name='Tag'
-        verbose_name_plural='Tags'
+        verbose_name = 'Tag'
+        verbose_name_plural = 'Tags'
 
     def __str__(self):
         return self.tag_text
@@ -65,12 +68,13 @@ class Recipe(models.Model):
         through='RecipeTag'
     )
 
-    created_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    created_time = models.DateTimeField(
+        auto_now_add=True, blank=True, null=True)
     modified_time = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     class Meta:
-        verbose_name='Recipe'
-        verbose_name_plural='Recipes'
+        verbose_name = 'Recipe'
+        verbose_name_plural = 'Recipes'
 
     def __str__(self):
         return self.title
@@ -81,7 +85,7 @@ class RecipeStep(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='steps'
+        related_name='recipe_steps'
     )
     step_number = models.PositiveSmallIntegerField(
         default=0
@@ -91,9 +95,9 @@ class RecipeStep(models.Model):
     )
 
     class Meta:
-        verbose_name='Step in Recipe'
-        verbose_name_plural='Steps in Recipe'
-        unique_together=('id', 'step_number')
+        verbose_name = 'Step in Recipe'
+        verbose_name_plural = 'Steps in Recipe'
+        unique_together = ('id', 'step_number')
 
     def __str__(self):
         return str(self.step_number)
@@ -116,18 +120,17 @@ class RecipeNote(models.Model):
         related_name='notes'
     )
     note_text = models.TextField(
-        verbose_name = 'Note'
+        verbose_name='Note'
     )
     # created_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     # modified_time = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     class Meta:
-        verbose_name='Note about Recipe'
-        verbose_name_plural='Notes about Recipe'
-    
+        verbose_name = 'Note about Recipe'
+        verbose_name_plural = 'Notes about Recipe'
+
     def __str__(self):
         return self.note_text
-
 
 
 class RecipeIngredient(models.Model):
@@ -153,9 +156,9 @@ class RecipeIngredient(models.Model):
     )
 
     class Meta:
-        verbose_name='Ingredient used in Recipe'
-        verbose_name_plural='Ingredients used in Recipe'
-    
+        verbose_name = 'Ingredient used in Recipe'
+        verbose_name_plural = 'Ingredients used in Recipe'
+
     def __str__(self):
         return '{0} - {1} {2}'.format(self.ingredient, self.quantity_amount, self.quantity_unit)
 
@@ -165,7 +168,7 @@ class RecipeTag(models.Model):
         Tag,
         verbose_name='Tag used',
         on_delete=models.CASCADE,
-        
+
     )
     recipe = models.ForeignKey(
         Recipe,
@@ -175,7 +178,5 @@ class RecipeTag(models.Model):
     )
 
     class Meta:
-        verbose_name='Tag in Recipe'
-        verbose_name_plural='Tags in Recipe'
-
-
+        verbose_name = 'Tag in Recipe'
+        verbose_name_plural = 'Tags in Recipe'
