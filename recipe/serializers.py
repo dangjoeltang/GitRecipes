@@ -56,6 +56,13 @@ class RecipeTagSerializer(serializers.ModelSerializer):
         model = RecipeTag
         fields = ('tag',)
 
+    def to_representation(self, instance):
+        tagObj = super().to_representation(instance)
+        return tagObj['tag']
+
+    def to_internal_value(self, data):
+        return {'tag': data}
+
     def create(self, validated_data):
         tag_data = validated_data.pop('tag')
         tag, created = Tag.objects.get_or_create(
