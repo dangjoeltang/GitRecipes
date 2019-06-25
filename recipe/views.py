@@ -123,13 +123,3 @@ class RecipeNoteDetailView(generics.RetrieveUpdateDestroyAPIView):
 class RecipeViewset(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = GenericRecipeSerializer
-
-    # def update(self, request, *args, **kwargs):
-    #     instance = self.get_object()
-    #     serializer = GenericRecipeSerializer(
-    #         instance=instance,
-    #         data=request.data
-    #     )
-    #     serializer.is_valid(raise_exception=True)
-    #     serializer.save()
-    #     return Response(serializer.data)

@@ -11,7 +11,7 @@ class CustomSlugRelatedField(serializers.SlugRelatedField):
                 **{self.slug_field: data})
             return obj
         except (TypeError, ValueError):
-            self.fail('invalid')
+            self.fail('invalid, custom slug field error')
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -198,19 +198,6 @@ class RecipeSerializer(serializers.ModelSerializer):
                 }
             )
             recipe_ingredient.save()
-
-        # Update Tags
-        # Delete removed tags
-        # tag_ids = [tag.get('id') for tag in validated_data['tags']]
-        # print(tag_ids)
-        # for tag in instance.tags:
-        #     if tag.id not in tag_ids:
-        #         tag.delete()
-
-        # for tag in validated_data['tags']:
-        #     tag, created = Tag.objects.get_or_create(tag_text = tag['tag_text'])
-        #     recipe_tag = RecipeTag.objects.create(tag=tag, recipe=instance)
-
         return instance
 
 
