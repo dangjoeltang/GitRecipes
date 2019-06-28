@@ -20,4 +20,4 @@ class UserProfile(models.Model):
     last_name = models.CharField(max_length=25)
 
     def __str__(self):
-        return self.user_account.username
+        return self.user_account

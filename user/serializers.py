@@ -17,11 +17,13 @@ class UserProfileSerializer(serializers.ModelSerializer):
     )
 
     user_account = serializers.StringRelatedField()
-    recipe_count = serializers.IntegerField(source='author_recipes.count', read_only=True)
+    recipe_count = serializers.IntegerField(
+        source='author_recipes.count', read_only=True)
 
     class Meta:
         model = UserProfile
-        fields = ('id', 'user_account', 'first_name', 'last_name', 'recipe_count', 'author_recipes')
+        fields = ('id', 'user_account', 'first_name',
+                  'last_name', 'recipe_count', 'author_recipes')
         extra_kwargs = {
             'url': {'view_name': 'profile-detail'},
         }
@@ -37,7 +39,8 @@ class UserAccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserAccount
-        fields = ('id', 'url', 'email', 'username', 'password', 'first_name', 'last_name', 'profile')
+        fields = ('id', 'url', 'email', 'username', 'password',
+                  'first_name', 'last_name', 'profile')
         # fields = '__all__'
         extra_kwargs = {
             'url': {'view_name': 'account-detail'},
@@ -51,11 +54,13 @@ class UserAccountSerializer(serializers.ModelSerializer):
         user.save()
         profile = UserProfile.objects.create(
             user_account=user,
+            username=user.username,
             first_name=user.first_name,
             last_name=user.last_name
         )
         return user
-    
+
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -63,6 +68,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         # Add custom claims
         token['username'] = user.username
+        token['profile_id'] = user.profile.id
         # token['email'] = user.email
         # ...
 

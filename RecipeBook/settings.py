@@ -62,8 +62,7 @@ ROOT_URLCONF = 'RecipeBook.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -208,6 +207,6 @@ django_heroku.settings(locals())
 # }
 
 try:
-   from .local_settings import *
+    from .local_settings import *
 except ImportError:
     pass
