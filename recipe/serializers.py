@@ -14,27 +14,6 @@ class CustomSlugRelatedField(serializers.SlugRelatedField):
             self.fail('invalid, custom slug field error')
 
 
-class TagSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Tag
-        fields = ('id', 'tag_text',)
-
-
-class IngredientDetailSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Ingredient
-        fields = ('id', 'name', 'description')
-
-
-class IngredientSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Ingredient
-        fields = ('id', 'name')
-
-
 # class AuthorSerializer(serializers.ModelSerializer):
 #     user_account = serializers.SlugRelatedField(
 #         slug_field='username',
@@ -44,6 +23,19 @@ class IngredientSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = UserProfile
 #         fields = ('user_account',)
+
+
+class IngredientDetailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Ingredient
+        fields = ('id', 'name', 'description')
+
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ('id', 'tag_text',)
 
 
 class RecipeTagSerializer(serializers.ModelSerializer):
@@ -101,111 +93,6 @@ class RecipeNoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecipeNote
         fields = ('note_text',)
-
-
-class RecipeListSerializer(serializers.HyperlinkedModelSerializer):
-    author = serializers.PrimaryKeyRelatedField(
-        queryset=UserProfile.objects.all()
-    )
-
-    num_ingredients = serializers.IntegerField(
-        source='recipe_ingredients.count', read_only=True)
-    num_steps = serializers.IntegerField(source='steps.count', read_only=True)
-    tags = TagSerializer(
-        many=True,
-        required=False
-    )
-
-    class Meta:
-        model = Recipe
-        fields = ('pk', 'url', 'title', 'author', 'num_ingredients',
-                  'tags', 'num_steps', 'created_time', 'modified_time')
-        extra_kwargs = {
-            'url': {'view_name': 'recipe-detail'}
-        }
-
-    def create(self, validated_data):
-        author = validated_data.pop('author')
-        author_profile = UserProfile.objects.get(id=author.id)
-        tags_data = validated_data.pop('tags')
-        recipe = Recipe(**validated_data)
-        recipe.author = author_profile
-        recipe.save()
-        for tag in tags_data:
-            tag, created = Tag.objects.get_or_create(tag_text=tag['tag_text'])
-            recipe_tag = RecipeTag.objects.create(tag=tag, recipe=recipe)
-            recipe_tag.save()
-        return recipe
-
-
-class RecipeIngredientSetSerializer(serializers.ModelSerializer):
-    # recipe = serializers.PrimaryKeyRelatedField(
-    #     queryset = Recipe.objects.all()
-    # )
-
-    ingredient = IngredientSerializer()
-
-    def create(self, validated_data):
-        ingredient_data = validated_data.pop('ingredient')
-        ingredient, created = Ingredient.objects.get_or_create(
-            name=ingredient_data.get('name'),
-            defaults={'description': 'No description provided'}
-        )
-        recipe_ingredient = RecipeIngredient(**validated_data)
-        recipe_ingredient.ingredient = ingredient
-        recipe_ingredient.save()
-        return recipe_ingredient
-
-    def update(self, instance, validated_data):
-        # No need to change ingredient model. Just delete and add new ingredient
-        # PUT for recipe_ingredient is jsut for updating quantity details
-        instance.quantity_amount = validated_data.get(
-            'quantity_amount', instance.quantity_amount)
-        instance.quantity_unit = validated_data.get(
-            'quantity_unit', instance.quantity_unit)
-        instance.save()
-        return instance
-
-    class Meta:
-        model = RecipeIngredient
-        # fields = '__all__'
-        exclude = ('recipe',)
-
-
-class RecipeSerializer(serializers.ModelSerializer):
-    author = serializers.StringRelatedField()
-    ingredients = RecipeIngredientSetSerializer(
-        source='recipe_ingredients', many=True)
-    steps = RecipeStepSerializer(source='recipe_steps', many=True)
-    tags = TagSerializer(source='recipe_tags', many=True)
-    notes = RecipeNoteSerializer(many=True)
-
-    class Meta:
-        model = Recipe
-        fields = ('pk', 'title', 'author', 'ingredients', 'tags',
-                  'steps', 'notes', 'created_time', 'modified_time')
-
-    def update(self, instance, validated_data):
-        instance.title = validated_data['title']
-        instance.save()
-
-        # Update Ingredients
-        recipe_ingredients_data = validated_data.pop('recipe_ingredients')
-
-        recipe_ingredients = instance.recipe_ingredients
-
-        # Check for updates with a recipe ingredient's quantity for this recipe
-        for recipe_ingredient_data in recipe_ingredients_data:
-            recipe_ingredient, created = RecipeIngredient.objects.update_or_create(
-                ingredient=recipe_ingredient_data.get('ingredient', None),
-                recipe=instance,
-                defaults={
-                    'quantity_amount': recipe_ingredient_data.get('quantity_amount', None),
-                    'quantity_unit': recipe_ingredient_data.get('quantity_unit')
-                }
-            )
-            recipe_ingredient.save()
-        return instance
 
 
 class GenericRecipeSerializer(serializers.ModelSerializer):

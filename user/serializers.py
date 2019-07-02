@@ -6,7 +6,6 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from user.models import UserAccount, UserProfile
 from recipe.models import Recipe
-from recipe.serializers import RecipeListSerializer
 
 
 class UserProfileSerializer(serializers.ModelSerializer):

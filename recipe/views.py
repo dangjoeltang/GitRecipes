@@ -16,110 +16,13 @@ class TagViewset(viewsets.ModelViewSet):
     serializer_class = TagSerializer
 
 
-class RecipeListView(generics.ListCreateAPIView):
-    queryset = Recipe.objects.all()
-    serializer_class = RecipeListSerializer
-
-
-class RecipeDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Recipe.objects.all()
-    serializer_class = RecipeSerializer
-
-
-class RecipeTagListView(generics.ListCreateAPIView):
-    queryset = RecipeTag.objects.all()
-    serializer_class = RecipeTagSerializer
-
-    def get_queryset(self):
-        recipe_pk = self.kwargs['pk']
-        return RecipeTag.objects.filter(recipe__pk=recipe_pk)
-
-    def perform_create(self, serializer):
-        recipe = Recipe.objects.get(id=self.kwargs['pk'])
-        serializer.save(recipe=recipe)
-
-
-class RecipeTagDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = RecipeTag.objects.all()
-    serializer_class = RecipeTagSerializer
-    lookup_field = 'id'
-
-    def get_queryset(self):
-        recipe_pk = self.kwargs['pk']
-        return RecipeTag.objects.filter(recipe__pk=recipe_pk)
-
-
-class RecipeIngredientListView(generics.ListCreateAPIView):
-    queryset = RecipeIngredient.objects.all()
-    serializer_class = RecipeIngredientSetSerializer
-
-    def get_queryset(self):
-        recipe_pk = self.kwargs['pk']
-        return RecipeIngredient.objects.filter(recipe__pk=recipe_pk)
-
-    def perform_create(self, serializer):
-        recipe = Recipe.objects.get(id=self.kwargs['pk'])
-        serializer.save(recipe=recipe)
-
-
-class RecipeIngredientDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = RecipeIngredient.objects.all()
-    serializer_class = RecipeIngredientSetSerializer
-    lookup_field = 'id'
-
-    def get_queryset(self):
-        recipe_pk = self.kwargs['pk']
-        recipe_ingredient_pk = self.kwargs['id']
-
-        return RecipeIngredient.objects.filter(recipe__pk=recipe_pk)
-
-
-class RecipeStepListView(generics.ListCreateAPIView):
-    queryset = RecipeStep.objects.all()
-    serializer_class = RecipeStepSerializer
-
-    def get_queryset(self):
-        recipe_pk = self.kwargs['pk']
-        return RecipeStep.objects.filter(recipe__pk=recipe_pk)
-
-    def perform_create(self, serializer):
-        recipe = Recipe.objects.get(id=self.kwargs['pk'])
-        serializer.save(recipe=recipe)
-
-
-class RecipeStepDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = RecipeStep.objects.all()
-    serializer_class = RecipeStepSerializer
-    lookup_field = 'step_number'
-
-    def get_queryset(self):
-        recipe_pk = self.kwargs['pk']
-        return RecipeStep.objects.filter(recipe__pk=recipe_pk)
-
-
-class RecipeNoteListView(generics.ListCreateAPIView):
-    queryset = RecipeNote.objects.all()
-    serializer_class = RecipeNoteSerializer
-
-    def get_queryset(self):
-        recipe_pk = self.kwargs['pk']
-        return RecipeNote.objects.filter(recipe__pk=recipe_pk)
-
-    def perform_create(self, serializer):
-        recipe = Recipe.objects.get(id=self.kwargs['pk'])
-        serializer.save(recipe=recipe)
-
-
-class RecipeNoteDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = RecipeNote.objects.all()
-    serializer_class = RecipeNoteSerializer
-    lookup_field = 'id'
-
-    def get_queryset(self):
-        recipe_pk = self.kwargs['pk']
-        return RecipeNote.objects.filter(recipe__pk=recipe_pk)
-
-
 class RecipeViewset(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = GenericRecipeSerializer
+
+    def get_queryset(self):
+        queryset = Recipe.objects.all()
+        profile = self.request.query_params.get('profile', None)
+        if profile is not None:
+            queryset = queryset.filter(author=profile)
+        return queryset
