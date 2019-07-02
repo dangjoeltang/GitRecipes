@@ -19,25 +19,15 @@ class UserAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
 class UserSessionView(generics.RetrieveAPIView):
     def get(self, request):
         print(request.user)
-        serializer = UserAccountSerializer(request.user, context={'request': request})
+        serializer = UserAccountSerializer(
+            request.user, context={'request': request})
         return Response(serializer.data)
 
 
-class UserProfileListView(generics.ListCreateAPIView):
+class UserProfileViewset(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
-
-
-class UserProfileDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileSerializer
-    # lookup_fields = ('user_account__username', 'id')
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
-
-# @api_view(['POST'])
-# def api_login(request):
-#     data = JsonReader.read_body(request)
-
