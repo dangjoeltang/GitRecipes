@@ -22,7 +22,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ('id', 'user_account', 'first_name',
-                  'last_name', 'recipe_count', 'author_recipes')
+                  'last_name', 'short_bio', 'profile_photo', 'recipe_count', 'author_recipes', 'created_time')
         extra_kwargs = {
             'url': {'view_name': 'profile-detail'},
         }

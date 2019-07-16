@@ -18,7 +18,7 @@ class UserAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 class UserSessionView(generics.RetrieveAPIView):
     def get(self, request):
-        print(request.user)
+        # print(request.user)
         serializer = UserAccountSerializer(
             request.user, context={'request': request})
         return Response(serializer.data)
