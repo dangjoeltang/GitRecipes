@@ -18,6 +18,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
     user_account = serializers.StringRelatedField()
     recipe_count = serializers.IntegerField(
         source='author_recipes.count', read_only=True)
+    profile_photo = serializers.CharField(
+        allow_blank=True, required=False
+    )
 
     class Meta:
         model = UserProfile

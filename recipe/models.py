@@ -98,7 +98,7 @@ class Recipe(models.Model):
         return self.title
 
 
-class RecipePhotos(models.Model):
+class RecipePhoto(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,

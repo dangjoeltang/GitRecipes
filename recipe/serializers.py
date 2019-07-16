@@ -95,6 +95,12 @@ class RecipeNoteSerializer(serializers.ModelSerializer):
         fields = ('note_text',)
 
 
+class RecipePhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecipePhoto
+        fields = ('photo_text', 'photo_file')
+
+
 class GenericRecipeSerializer(serializers.ModelSerializer):
     # author = serializers.StringRelatedField()
 
@@ -117,19 +123,27 @@ class GenericRecipeSerializer(serializers.ModelSerializer):
         many=True
     )
 
+    recipe_photos = RecipePhotoSerializer(
+        many=True,
+        # required=False
+    )
+
     class Meta:
         model = Recipe
         # fields = '__all__'
-        fields = ('pk', 'title', 'privacy', 'author', 'ingredients', 'tags',
+        fields = ('pk', 'title', 'author', 'privacy', 'description', 'ingredients', 'tags',
+                  #   'steps', 'notes', 'created_time', 'modified_time')
                   'steps', 'notes', 'recipe_photos', 'created_time', 'modified_time')
 
     def create(self, validated_data):
+        print(validated_data)
         author = validated_data.pop('author')
         author_profile = UserProfile.objects.get(id=author.id)
         tags_data = validated_data.pop('recipe_tags')
         ingredients_data = validated_data.pop('recipe_ingredients')
         steps_data = validated_data.pop('steps')
         notes_data = validated_data.pop('notes')
+        photos_data = validated_data.pop('recipe_photos')
 
         recipe = Recipe(**validated_data)
         recipe.author = author_profile
@@ -159,12 +173,19 @@ class GenericRecipeSerializer(serializers.ModelSerializer):
                 recipe=recipe,
                 note_text=note['note_text']
             )
+        for photo in photos_data:
+            recipe_photo = RecipePhoto.objects.create(
+                recipe=recipe,
+                photo_text=photo['photo_text'],
+                photo_file=photo['photo_file']
+            )
         return recipe
 
     def update(self, instance, validated_data):
         instance.title = validated_data['title']
         instance.author = validated_data['author']
         instance.privacy = validated_data['privacy']
+        instance.photos = validated_data['photos']
         instance.save()
 
         # Remove tags that were deleted
