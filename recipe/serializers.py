@@ -120,8 +120,8 @@ class GenericRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         # fields = '__all__'
-        fields = ('pk', 'title', 'author', 'ingredients', 'tags',
-                  'steps', 'notes', 'created_time', 'modified_time')
+        fields = ('pk', 'title', 'privacy', 'author', 'ingredients', 'tags',
+                  'steps', 'notes', 'recipe_photos', 'created_time', 'modified_time')
 
     def create(self, validated_data):
         author = validated_data.pop('author')
@@ -164,6 +164,7 @@ class GenericRecipeSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.title = validated_data['title']
         instance.author = validated_data['author']
+        instance.privacy = validated_data['privacy']
         instance.save()
 
         # Remove tags that were deleted

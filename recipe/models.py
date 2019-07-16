@@ -52,6 +52,24 @@ class Recipe(models.Model):
         verbose_name='Recipe Title',
         max_length=200,
     )
+
+    privacy = models.CharField(
+        max_length=10,
+        choices=[
+            ('public', 'Public'),
+            ('private', 'Private'),
+            ('secret', 'Secret')
+        ],
+        default='public'
+    )
+
+    description = models.CharField(
+        verbose_name='Recipe Description',
+        max_length=400,
+        blank=True,
+        default='No description available.'
+    )
+
     author = models.ForeignKey(
         UserProfile,
         verbose_name='Recipe Author',
@@ -78,6 +96,29 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class RecipePhotos(models.Model):
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='recipe_photos'
+    )
+    photo_text = models.CharField(
+        max_length=200,
+        blank=True,
+        default=''
+    )
+    photo_file = models.FileField(
+        upload_to='recipes/',
+        blank=True
+    )
+
+    uploaded_time = models.DateTimeField(
+        auto_now_add=True, blank=True, null=True)
+
+    def __str__(self):
+        return self.id
 
 
 class RecipeStep(models.Model):
