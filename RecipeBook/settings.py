@@ -164,7 +164,7 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 # S3 static and media files settings
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'RecipeBook/static'),
+    os.path.join(BASE_DIR, 'static'),
 ]
 
 AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
