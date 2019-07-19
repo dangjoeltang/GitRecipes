@@ -98,7 +98,7 @@ class RecipeNoteSerializer(serializers.ModelSerializer):
 class RecipePhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecipePhoto
-        fields = ('photo_text', 'photo_file')
+        fields = ('photo_text', 'photo_file', 'uploaded_time')
 
 
 class GenericRecipeSerializer(serializers.ModelSerializer):
@@ -185,7 +185,7 @@ class GenericRecipeSerializer(serializers.ModelSerializer):
         instance.title = validated_data['title']
         instance.author = validated_data['author']
         instance.privacy = validated_data['privacy']
-        instance.photos = validated_data['photos']
+        instance.photos = validated_data['recipe_photos']
         instance.save()
 
         # Remove tags that were deleted

@@ -56,9 +56,9 @@ class Recipe(models.Model):
     privacy = models.CharField(
         max_length=10,
         choices=[
-            ('public', 'Public'),
-            ('private', 'Private'),
-            ('secret', 'Secret')
+            ('Public', 'Public'),
+            ('Private', 'Private'),
+            ('Secret', 'Secret')
         ],
         default='public'
     )
@@ -110,15 +110,14 @@ class RecipePhoto(models.Model):
         default=''
     )
     photo_file = models.FileField(
-        upload_to='recipes/',
-        blank=True
+        upload_to='recipe_photos',
     )
 
     uploaded_time = models.DateTimeField(
         auto_now_add=True, blank=True, null=True)
 
     def __str__(self):
-        return self.id
+        return self.photo_file
 
 
 class RecipeStep(models.Model):
