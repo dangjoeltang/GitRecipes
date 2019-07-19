@@ -98,7 +98,7 @@ class RecipeNoteSerializer(serializers.ModelSerializer):
 class RecipePhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecipePhoto
-        fields = ('photo_text', 'photo_file')
+        fields = ('photo_text', 'photo_file', 'uploaded_time')
 
 
 class GenericRecipeSerializer(serializers.ModelSerializer):
