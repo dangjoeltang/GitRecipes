@@ -56,9 +56,9 @@ class Recipe(models.Model):
     privacy = models.CharField(
         max_length=10,
         choices=[
-            ('public', 'Public'),
-            ('private', 'Private'),
-            ('secret', 'Secret')
+            ('Public', 'Public'),
+            ('Private', 'Private'),
+            ('Secret', 'Secret')
         ],
         default='public'
     )
