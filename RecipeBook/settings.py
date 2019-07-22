@@ -127,6 +127,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(1),
     'REFRESH_TOKEN_LIFETIME': timedelta(10),
 
+    # 'ALGORITHM': 'RS256',
     'SIGNING_KEY': os.getenv('SIGNING_KEY'),
 
 

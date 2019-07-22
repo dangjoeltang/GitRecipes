@@ -265,3 +265,6 @@ class GenericRecipeSerializer(serializers.ModelSerializer):
             )
 
         return instance
+
+
+# class UploadSerializer(serializers.Serializer):

@@ -14,4 +14,5 @@ router.register('profiles', UserProfileViewset, base_name='profile')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('sign_s3/', sign_s3)
 ]

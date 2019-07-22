@@ -17,6 +17,8 @@ urlpatterns = [
     # path('profiles/<int:pk>/', UserProfileDetailView.as_view(), name='profile-detail'),
     path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
 
+
+
     # path('login/', api_login, name='login'),
     # path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
