@@ -63,7 +63,7 @@ def sign_s3(request):
             # {"acl": "public-read"},
             {"Content-Type": file_type}
         ],
-        ExpiresIn=10  # seconds
+        ExpiresIn=100  # seconds
     )
 
     # print('attempting post')
@@ -76,5 +76,6 @@ def sign_s3(request):
 
     return JsonResponse({
         'data': presigned_post,
-        'url': 'https://%s.s3.amazonaws.com/%s' % (S3_BUCKET, file_name)
+        'url': 'https://%s.s3.amazonaws.com/%s' % (S3_BUCKET, file_name),
+        'path': file_name
     })
