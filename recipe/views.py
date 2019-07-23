@@ -11,7 +11,6 @@ from rest_framework.decorators import api_view, permission_classes
 from django.http import JsonResponse
 import boto3
 from botocore.config import Config
-boto3.set_stream_logger(name='botocore')
 
 
 class IngredientViewset(viewsets.ModelViewSet):
@@ -48,7 +47,7 @@ def sign_s3(request):
     s3 = boto3.client(
         's3',
         region_name=region,
-        config=Config(signature_version='s3v4'),
+        # config=Config(signature_version='s3v4'),
         aws_access_key_id=AWS_ACCESS_KEY_ID,
         aws_secret_access_key=AWS_SECRET_ACCESS_KEY
     )
@@ -56,20 +55,24 @@ def sign_s3(request):
     presigned_post = s3.generate_presigned_post(
         Bucket=S3_BUCKET,
         Key=file_name,
-        Fields={"Content-Type": file_type},
+        Fields={
+            # 'acl': 'public-read',
+            "Content-Type": file_type
+        },
         Conditions=[
+            # {"acl": "public-read"},
             {"Content-Type": file_type}
         ],
-        ExpiresIn=3600  # seconds
+        ExpiresIn=10  # seconds
     )
 
-    # object_name = os.path.join(sys.path[0], '765-default-avatar.png')
-    # with open(object_name, 'rb') as f:
-    #     files = {'file': (object_name, f)}
-
-    #     print('the file has ben opened')
-    #     http_response = requests.post(
-    #         presigned_post['url'], data=presigned_post['fields'], files=files)
+    # print('attempting post')
+    # url = presigned_post['url']
+    # data = presigned_post['fields']
+    # files = {'file': open(os.path.join(
+    #     sys.path[0], '765-default-avatar.png'), 'rb')}
+    # response = requests.post(url, data=data, files=files)
+    # print('post succeeded')
 
     return JsonResponse({
         'data': presigned_post,
