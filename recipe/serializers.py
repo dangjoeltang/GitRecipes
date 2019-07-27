@@ -100,6 +100,23 @@ class RecipePhotoSerializer(serializers.ModelSerializer):
         model = RecipePhoto
         fields = ('photo_text', 'photo_file', 'uploaded_time')
 
+    # def to_representation(self, instance):
+    #     photoObj = super().to_representation(instance)
+    #     return photoObj['photo_file']
+
+    # def to_internal_value(self, data):
+    #     return {'photo_file': data, 'photo_text': ''}
+
+    # def create(self, validated_data):
+    #     photo_data = validated_data.pop('')
+    #     tag, created = Tag.objects.get_or_create(
+    #         tag_text=tag_data.get('tag_text')
+    #     )
+    #     recipe_tag = RecipeTag(**validated_data)
+    #     recipe_tag.tag = tag
+    #     recipe_tag.save()
+    #     return recipe_tag
+
 
 class GenericRecipeSerializer(serializers.ModelSerializer):
     # author = serializers.StringRelatedField()
@@ -185,7 +202,7 @@ class GenericRecipeSerializer(serializers.ModelSerializer):
         instance.title = validated_data['title']
         instance.author = validated_data['author']
         instance.privacy = validated_data['privacy']
-        instance.photos = validated_data['recipe_photos']
+        # instance.photos = validated_data['recipe_photos']
         instance.save()
 
         # Remove tags that were deleted
@@ -261,6 +278,21 @@ class GenericRecipeSerializer(serializers.ModelSerializer):
         for note in validated_data['notes']:
             recipe_note, created = RecipeNote.objects.get_or_create(
                 note_text=note['note_text'],
+                recipe=instance
+            )
+
+        # Photos
+        new_photos = [photo['photo_file']
+                      for photo in validated_data['recipe_photos']]
+        for photo in instance.recipe_photos.all():
+            if photo.photo_file not in new_photos:
+                print('DELETING', photo)
+                photo.delete()
+
+        for photo in validated_data['recipe_photos']:
+            recipe_photo, created = RecipePhoto.objects.get_or_create(
+                photo_file=photo['photo_file'],
+                photo_text=photo['photo_text'],
                 recipe=instance
             )
 

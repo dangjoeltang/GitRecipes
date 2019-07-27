@@ -60,7 +60,7 @@ class Recipe(models.Model):
             ('Private', 'Private'),
             ('Secret', 'Secret')
         ],
-        default='public'
+        default='Public'
     )
 
     description = models.CharField(
@@ -109,8 +109,8 @@ class RecipePhoto(models.Model):
         blank=True,
         default=''
     )
-    photo_file = models.FileField(
-        upload_to='recipe_photos',
+    photo_file = models.CharField(
+        max_length=400
     )
 
     uploaded_time = models.DateTimeField(
