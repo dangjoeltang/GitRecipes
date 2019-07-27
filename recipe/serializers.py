@@ -202,7 +202,7 @@ class GenericRecipeSerializer(serializers.ModelSerializer):
         instance.title = validated_data['title']
         instance.author = validated_data['author']
         instance.privacy = validated_data['privacy']
-        # instance.photos = validated_data['recipe_photos']
+        instance.description = validated_data['description']
         instance.save()
 
         # Remove tags that were deleted
