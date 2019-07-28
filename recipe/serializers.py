@@ -109,7 +109,7 @@ class RecipePhotoSerializer(serializers.ModelSerializer):
 
     # def create(self, validated_data):
     #     photo_data = validated_data.pop('')
-    #     tag, created = Tag.objects.get_or_create(
+    #     photo, created = Tag.objects.get_or_create(
     #         tag_text=tag_data.get('tag_text')
     #     )
     #     recipe_tag = RecipeTag(**validated_data)
