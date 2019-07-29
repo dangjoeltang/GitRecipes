@@ -8,6 +8,8 @@ from rest_framework import viewsets
 from rest_framework import generics
 from rest_framework import mixins
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+
 from django.http import JsonResponse
 import boto3
 from botocore.config import Config
@@ -16,16 +18,19 @@ from botocore.config import Config
 class IngredientViewset(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientDetailSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class TagViewset(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class RecipeViewset(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = GenericRecipeSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         queryset = Recipe.objects.all()
@@ -36,6 +41,7 @@ class RecipeViewset(viewsets.ModelViewSet):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def sign_s3(request):
     S3_BUCKET = 'gitrecipes-media'
     AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
@@ -65,14 +71,6 @@ def sign_s3(request):
         ],
         ExpiresIn=100  # seconds
     )
-
-    # print('attempting post')
-    # url = presigned_post['url']
-    # data = presigned_post['fields']
-    # files = {'file': open(os.path.join(
-    #     sys.path[0], '765-default-avatar.png'), 'rb')}
-    # response = requests.post(url, data=data, files=files)
-    # print('post succeeded')
 
     return JsonResponse({
         'data': presigned_post,
