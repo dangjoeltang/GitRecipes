@@ -9,6 +9,7 @@ from rest_framework import generics
 from rest_framework import mixins
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from recipe.permissions import *
 
 from django.http import JsonResponse
 import boto3
@@ -30,7 +31,7 @@ class TagViewset(viewsets.ModelViewSet):
 class RecipeViewset(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = GenericRecipeSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthorOrReadOnly]
 
     def get_queryset(self):
         queryset = Recipe.objects.all()
