@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser, IsAuthentic
 
 from user.models import UserAccount, UserProfile
 from user.serializers import UserProfileSerializer, UserAccountSerializer, MyTokenObtainPairSerializer
+from user.permissions import *
 
 
 class UserAccountListView(generics.ListCreateAPIView):
@@ -16,7 +17,7 @@ class UserAccountListView(generics.ListCreateAPIView):
 class UserAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = UserAccount.objects.all()
     serializer_class = UserAccountSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAccountOwner]
 
 
 class UserSessionView(generics.RetrieveAPIView):
@@ -32,7 +33,7 @@ class UserSessionView(generics.RetrieveAPIView):
 class UserProfileViewset(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsProfileOwnerOrReadOnly]
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
