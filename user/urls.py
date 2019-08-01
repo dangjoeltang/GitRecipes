@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework import routers
-from user.views import UserSessionView, UserProfileViewset, UserAccountListView, UserAccountDetailView, MyTokenObtainPairView
+from user.views import UserSessionView, UserProfileViewset, UserAccountListView, UserAccountDetailView, CreateUserView, MyTokenObtainPairView
 # from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
@@ -15,6 +15,7 @@ urlpatterns = [
     # These paths are public
     # path('profiles/', UserProfileView.as_view(), name='profile-list'),
     # path('profiles/<int:pk>/', UserProfileDetailView.as_view(), name='profile-detail'),
+    path('register/', CreateUserView.as_view(), name='register'),
     path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
 
 

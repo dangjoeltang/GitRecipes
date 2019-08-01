@@ -144,7 +144,9 @@ SIMPLE_JWT = {
     'JTI_CLAIM': 'jti',
 }
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WHITELIST = (
+    'https://dangjoeltang.github.io',
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
