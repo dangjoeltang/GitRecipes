@@ -119,7 +119,10 @@ class RecipePhotoSerializer(serializers.ModelSerializer):
 
 
 class GenericRecipeSerializer(serializers.ModelSerializer):
-    # author = serializers.StringRelatedField()
+    # author = serializers.SlugRelatedField(
+    #     slug_field='username',
+    #     queryset=UserProfile.objects.all().select_related('user_account'),
+    # )
 
     ingredients = RecipeIngredientSerializer(
         source='recipe_ingredients',

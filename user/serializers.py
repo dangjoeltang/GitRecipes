@@ -12,10 +12,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
     author_recipes = serializers.HyperlinkedRelatedField(
         many=True,
         read_only=True,
-        view_name='recipe-detail'
+        view_name='recipe-detail',
     )
 
-    user_account = serializers.StringRelatedField()
     recipe_count = serializers.IntegerField(
         source='author_recipes.count', read_only=True)
     profile_photo = serializers.CharField(
@@ -24,28 +23,30 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ('id', 'user_account', 'first_name',
+        fields = ('id', 'user_account', 'username', 'first_name',
                   'last_name', 'short_bio', 'profile_photo', 'recipe_count', 'author_recipes', 'created_time')
         extra_kwargs = {
             'url': {'view_name': 'profile-detail'},
         }
+        lookup_field = 'username'
 
 
 class UserAccountSerializer(serializers.ModelSerializer):
-    profile = serializers.HyperlinkedRelatedField(
-        required=False,
-        view_name='profile-detail',
-        # queryset=UserProfile.objects.all(),
-        read_only=True
-    )
+    # profile = serializers.HyperlinkedRelatedField(
+    #     required=False,
+    #     view_name='profile-detail',
+    #     # queryset=UserProfile.objects.all(),
+    #     read_only=True,
+    #     lookup_field='profile'
+    # )
 
     class Meta:
         model = UserAccount
-        fields = ('id', 'url', 'email', 'username', 'password',
-                  'first_name', 'last_name', 'profile')
+        fields = ('id', 'profile', 'email', 'username', 'password',
+                  'first_name', 'last_name')
         # fields = '__all__'
         extra_kwargs = {
-            'url': {'view_name': 'account-detail'},
+            # 'url': {'view_name': 'account-detail'},
             'password': {'write_only': True}
         }
 

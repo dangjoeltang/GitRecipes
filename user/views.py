@@ -12,13 +12,14 @@ from user.permissions import *
 class UserAccountListView(generics.ListCreateAPIView):
     queryset = UserAccount.objects.all()
     serializer_class = UserAccountSerializer
-    permission_classes = [IsAdminUser]
+    # permission_classes = [IsAdminUser]
 
 
 class UserAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = UserAccount.objects.all()
     serializer_class = UserAccountSerializer
-    permission_classes = [IsAccountOwner]
+    # permission_classes = [IsAccountOwner]
+    # lookup_field = 'username'
 
 
 class UserSessionView(generics.RetrieveAPIView):
@@ -34,7 +35,8 @@ class UserSessionView(generics.RetrieveAPIView):
 class UserProfileViewset(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
-    permission_classes = [IsProfileOwnerOrReadOnly]
+    # permission_classes = [IsProfileOwnerOrReadOnly]
+    lookup_field = 'user_account__username'
 
 
 class MyTokenObtainPairView(TokenObtainPairView):

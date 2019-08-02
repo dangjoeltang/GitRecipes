@@ -16,6 +16,11 @@ class UserProfile(models.Model):
         on_delete=models.CASCADE,
         related_name='profile'
     )
+
+    @property
+    def username(self):
+        return self.user_account.username
+
     first_name = models.CharField(max_length=25)
     last_name = models.CharField(max_length=25)
     short_bio = models.CharField(max_length=400, blank=True)
