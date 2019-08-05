@@ -110,7 +110,8 @@ class RecipePhoto(models.Model):
         default=''
     )
     photo_file = models.CharField(
-        max_length=400
+        max_length=400,
+        blank=True
     )
 
     uploaded_time = models.DateTimeField(

@@ -145,7 +145,7 @@ class GenericRecipeSerializer(serializers.ModelSerializer):
 
     recipe_photos = RecipePhotoSerializer(
         many=True,
-        # required=False
+        required=False
     )
 
     class Meta:
