@@ -9,6 +9,9 @@ from rest_framework import generics
 from rest_framework import mixins
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import RecipeFilterSet
+
 from recipe.permissions import *
 
 from django.http import JsonResponse
@@ -33,12 +36,16 @@ class RecipeViewset(viewsets.ModelViewSet):
     serializer_class = GenericRecipeSerializer
     permission_classes = [IsAuthorOrReadOnly]
 
-    def get_queryset(self):
-        queryset = Recipe.objects.all()
-        profile = self.request.query_params.get('profile', None)
-        if profile is not None:
-            queryset = queryset.filter(author=profile)
-        return queryset
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = RecipeFilterSet
+    # filter_fields = ('tags',)
+
+    # def get_queryset(self):
+    #     queryset = Recipe.objects.all()
+    #     profile = self.request.query_params.get('profile', None)
+    #     if profile is not None:
+    #         queryset = queryset.filter(author=profile)
+    #     return queryset
 
 
 @api_view(['POST'])
