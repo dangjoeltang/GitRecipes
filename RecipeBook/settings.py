@@ -145,6 +145,7 @@ SIMPLE_JWT = {
 
 CORS_ORIGIN_WHITELIST = (
     'https://dangjoeltang.github.io',
+    'https://gitrecipes.netlify.com/'
 )
 
 # Internationalization
