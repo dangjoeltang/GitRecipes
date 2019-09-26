@@ -156,7 +156,6 @@ class GenericRecipeSerializer(serializers.ModelSerializer):
                   'steps', 'notes', 'recipe_photos', 'created_time', 'modified_time')
 
     def create(self, validated_data):
-        print(validated_data)
         author = validated_data.pop('author')
         author_profile = UserProfile.objects.get(id=author.id)
         tags_data = validated_data.pop('recipe_tags')

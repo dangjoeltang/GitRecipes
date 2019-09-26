@@ -37,7 +37,7 @@ class UserAccountSerializer(serializers.ModelSerializer):
     #     view_name='profile-detail',
     #     # queryset=UserProfile.objects.all(),
     #     read_only=True,
-    #     lookup_field='profile'
+    #     # lookup_field='profile'
     # )
 
     class Meta:
@@ -47,7 +47,8 @@ class UserAccountSerializer(serializers.ModelSerializer):
         # fields = '__all__'
         extra_kwargs = {
             # 'url': {'view_name': 'account-detail'},
-            'password': {'write_only': True}
+            'password': {'write_only': True},
+            'profile': {'required': False}
         }
 
     def create(self, validated_data):
